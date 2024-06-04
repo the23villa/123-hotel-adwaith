@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on MenuItems
-.
- * Date: 15, August 2023
- */
-
 import Link from "next/link";
 import React from "react";
 import OutsideClick from "../../outsideClick/OutsideClick";
@@ -15,7 +9,7 @@ const MenuItems = ({ isOpen, setIsOpen }) => {
     setIsOpen(!isOpen);
   };
 
-  const menuItems = [
+  const adminMenuItems = [
     {
       id: 1,
       name: "Dashboard",
@@ -23,7 +17,15 @@ const MenuItems = ({ isOpen, setIsOpen }) => {
     },
   ];
 
-  const userItems = [
+  const userMenuItems = [
+    {
+      id: 1,
+      name: "My Bookings",
+      href: "/dashboard",
+    },
+  ];
+
+  const commonMenuItems = [
     {
       id: 2,
       name: "Sign Up",
@@ -45,7 +47,10 @@ const MenuItems = ({ isOpen, setIsOpen }) => {
               {Object.keys(user).length > 0 && (
                 <>
                   <div className="flex flex-col gap-y-2 px-secondary">
-                    {menuItems.map(({ id, name, href }) => (
+                    {(user.role === "admin"
+                      ? adminMenuItems
+                      : userMenuItems
+                    ).map(({ id, name, href }) => (
                       <Link
                         key={id}
                         href={href}
@@ -78,7 +83,7 @@ const MenuItems = ({ isOpen, setIsOpen }) => {
                     </span>
                   </button>
                 ) : (
-                  userItems.map(({ id, name, href }) => (
+                  commonMenuItems.map(({ id, name, href }) => (
                     <Link
                       key={id}
                       href={href}

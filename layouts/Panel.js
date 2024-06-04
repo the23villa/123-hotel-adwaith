@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Panel
-.
- * Date: 24, January 2024
- */
-
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -21,11 +15,14 @@ import { PiCreditCardLight, PiCubeTransparent } from "react-icons/pi";
 import { AiOutlineUserSwitch } from "react-icons/ai";
 import { TbUserEdit, TbUserShare } from "react-icons/tb";
 import { BsCartCheck } from "react-icons/bs";
+import { useSelector } from "react-redux";
 
 const Panel = ({ children }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const routes = [
+  const user = useSelector((state) => state?.auth);
+
+  const allRoutes = [
     {
       name: "My Profile",
       path: "/dashboard/my-profile",
@@ -40,16 +37,6 @@ const Panel = ({ children }) => {
       name: "List Rents",
       path: "/dashboard/list-rents",
       icon: <PiCubeTransparent className="w-5 h-5" />,
-    },
-    {
-      name: "View Cart",
-      path: "/dashboard/view-cart",
-      icon: <BsCartCheck className="w-5 h-5" />,
-    },
-    {
-      name: "View Favorites",
-      path: "/dashboard/view-favorites",
-      icon: <MdFavoriteBorder className="w-5 h-5" />,
     },
     {
       name: "View Purchases",
@@ -87,6 +74,26 @@ const Panel = ({ children }) => {
       icon: <MdOutlineRateReview className="w-5 h-5" />,
     },
   ];
+
+  const userRoutes = [
+    {
+      name: "My Profile",
+      path: "/dashboard/my-profile",
+      icon: <TbUserEdit className="w-5 h-5" />,
+    },
+    {
+      name: "View Favorites",
+      path: "/dashboard/view-favorites",
+      icon: <MdFavoriteBorder className="w-5 h-5" />,
+    },
+    {
+      name: "View Purchases",
+      path: "/dashboard/view-purchases",
+      icon: <PiCreditCardLight className="w-5 h-5" />,
+    },
+  ];
+
+  const routes = user?.role === "admin" ? allRoutes : userRoutes;
 
   return (
     <section className="h-screen w-screen">
@@ -144,7 +151,7 @@ const Panel = ({ children }) => {
 
         <footer className="px-4 py-2 flex justify-center items-center flex-row rounded">
           <p className="text-xs">
-            © {new Date().getFullYear()} Travello eBooking. All rights reserved.
+            © {new Date().getFullYear()} 123.booking , All rights reserved.
           </p>
         </footer>
       </div>
