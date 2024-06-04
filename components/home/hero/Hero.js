@@ -2,6 +2,7 @@ import Container from "@/components/shared/container/Container";
 import React, { useState, useEffect } from "react";
 import HeroDescription from "./HeroDescription";
 import HeroSlider from "./HeroSlider";
+import HeroSearch from "./HeroSearch";
 
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -30,6 +31,7 @@ const Hero = () => {
           <div className="grid md:grid-cols-12 md:items-center gap-12 grid-cols-1">
             <HeroDescription />
             {!isMobile && <HeroSlider />}
+            <HeroSearch />
           </div>
         </div>
       </Container>

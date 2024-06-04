@@ -73,8 +73,8 @@ const HeroSlider = () => {
               <LoadImage
                 src={image}
                 alt={`Image ${index + 1}`}
-                height={512}
-                width={364}
+                height={412}
+                width={264}
                 className="rounded-full md:ml-auto mx-auto"
                 title="Dimension: 364x512"
               />

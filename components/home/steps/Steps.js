@@ -8,7 +8,7 @@ const Steps = () => {
   return (
     <section className="py-12">
       <Container>
-        <section className="w-full h-full flex flex-col gap-y-12">
+        <section className="w-full h-full flex flex-col gap-y-12 mt-10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <article className="flex flex-col gap-y-4">
               <h1 className="lg:text-5xl md:text-4xl text-3xl font-serif whitespace-normal">

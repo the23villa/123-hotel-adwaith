@@ -16,14 +16,14 @@ const HeroDescription = () => {
             Book Your Dream Stay And Make <HighlightText>Memory</HighlightText>
           </h1>
         </div>
-        <div>
+        {/* <div>
           <Button
             className="px-[18px] py-[13px]"
             onClick={() => window.open("/tours", "_self")}
           >
             Check Now
           </Button>
-        </div>
+        </div> */}
       </article>
     </section>
   );
