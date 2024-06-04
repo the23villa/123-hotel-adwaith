@@ -177,13 +177,3 @@ const Signup = () => {
 
 export default Signup;
 
-/**
- * How to Multipart File Upload Using FormData with React Hook Form
- * https://refine.dev/blog/how-to-multipart-file-upload-with-react-hook-form/
- *
- * React hook form: How to can I use onChange on React Hook Form Version 7.0
- * https://stackoverflow.com/questions/66936135/react-hook-form-how-to-can-i-use-onchange-on-react-hook-form-version-7-0
- *
- * API resolved without sending a response in Next.Js
- * https://stackoverflow.com/questions/60684227/api-resolved-without-sending-a-response-in-nextjs
- */
