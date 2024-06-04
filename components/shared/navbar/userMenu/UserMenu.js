@@ -13,7 +13,7 @@ import MobileMenu from "../mobileMenu/MobileMenu";
 const UserMenu = () => {
   return (
     <div className="flex flex-row items-center gap-x-4">
-      <Search />
+      <Search/>
       <Favorites />
       {/* <Cart /> */}
       <MobileMenu />

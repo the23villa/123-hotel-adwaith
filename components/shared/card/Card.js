@@ -98,7 +98,7 @@ const Card = ({ tour }) => {
       <div className="relative">
         {user?.favorite?.rents.some((rent) => rent?._id === _id) ? (
           <button
-            className="absolute top-4 right-4 p-1.5 border rounded-full border-secondary bg-white hover:text-white duration-100 z-50 opacity-0 group-hover:opacity-100 transition-opacity ease-linear delay-100"
+            className="absolute top-4 right-4 p-1.5 border rounded-full border-secondary bg-white hover:text-white duration-100 z-50 transition-opacity ease-linear delay-100"
             onClick={() => deleteFromFavorite(_id)}
           >
             {deleteFromFavoriteLoading ? (
@@ -109,7 +109,7 @@ const Card = ({ tour }) => {
           </button>
         ) : (
           <button
-            className="absolute top-4 right-4 p-1.5 border rounded-full border-secondary bg-white hover:bg-primary hover:text-white duration-100 z-50 opacity-0 group-hover:opacity-100 transition-opacity ease-linear delay-100"
+            className="absolute top-4 right-4 p-1.5 border rounded-full border-secondary bg-white hover:bg-primary hover:text-white duration-100 z-50 transition-opacity ease-linear delay-100"
             onClick={() => addToFavorite({ rent: _id })}
           >
             {addToFavoriteLoading ? (
@@ -137,7 +137,7 @@ const Card = ({ tour }) => {
               }}
             />
           ))}
-          <div className="absolute left-2 bottom-4 flex flex-row gap-x-2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute left-2 bottom-4 flex flex-row gap-x-2 z-50">
             <button
               type="button"
               className="h-8 w-8 bg-white rounded-full text-black flex justify-center items-center shadow-2xl"
