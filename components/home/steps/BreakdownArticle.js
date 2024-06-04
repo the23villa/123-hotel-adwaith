@@ -1,29 +1,47 @@
-/**
- * Title: Write a program using JavaScript on BreakdownArticle
-.
- * Date: 28, September 2023
- */
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BiCar } from "react-icons/bi";
 import { MdLocationCity, MdPayment } from "react-icons/md";
 
 const BreakdownArticle = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const items = [
     {
       title: "Choose our home",
-      icon: <MdLocationCity className="w-8 h-8 text-primary" />,
+      icon: (
+        <MdLocationCity
+          className={`w-8 h-8 ${isScrolled ? "text-primary" : ""}`}
+        />
+      ),
       description: "Start your journey by selecting your ideal home.",
     },
     {
       title: "Secure and Easy Payment",
-      icon: <MdPayment className="w-8 h-8 text-primary" />,
+      icon: (
+        <MdPayment className={`w-8 h-8 ${isScrolled ? "text-primary" : ""}`} />
+      ),
       description:
         "Effortless transactions for a worry-free travel experience.",
     },
     {
       title: "Reach Agency on Selected Date",
-      icon: <BiCar className="w-8 h-8 text-primary" />,
+      icon: <BiCar className={`w-8 h-8 ${isScrolled ? "text-primary" : ""}`} />,
       description: "Contact us to finalize on the chosen date.",
     },
   ];
@@ -42,7 +60,11 @@ const BreakdownArticle = () => {
             <h2 className="text-lg">{title}</h2>
             <p className="text-sm">{description}</p>
           </div>
-          <span className="absolute -bottom-10 right-4 text-secondary/50 text-9xl font-sans group-hover:-bottom-0 transition-all delay-100 ease-linear">
+          <span
+            className={`absolute -bottom-10 right-4 text-secondary/50 text-9xl font-sans ${
+              isScrolled ? "group-hover:-bottom-0" : ""
+            } transition-all delay-100 ease-linear`}
+          >
             0{index + 1}
           </span>
         </article>
