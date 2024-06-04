@@ -23,7 +23,7 @@ const Logo = () => {
   return (
     <>
       <LoadImage
-        src="/assets/log.svg"
+        src="/assets/logo2.png"
         alt="logo"
         // placeholder="blur"
         // blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(60, 50))}`}
