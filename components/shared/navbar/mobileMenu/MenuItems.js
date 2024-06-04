@@ -41,7 +41,7 @@ const MenuItems = ({ isOpen, setIsOpen }) => {
   return (
     isOpen && (
       <OutsideClick onOutsideClick={handleOutsideClick}>
-        <section className="absolute top-full right-0 w-40 mt-2 z-50">
+        <section className="absolute md:top-full md:right-0 w-40 mt-2 z-50 bottom-full right-0">
           <div className="w-full h-full bg-secondary shadow rounded border border-primary/20">
             <div className="flex flex-col gap-y-3 py-primary">
               {Object.keys(user).length > 0 && (
