@@ -99,19 +99,11 @@ const AllReviews = ({ className }) => {
         <div className="w-full h-full flex flex-col gap-y-12">
           <div className="flex flex-row justify-between items-center">
             <article className="flex flex-col gap-y-4">
-              <h1 className="lg:text-5xl md:text-4xl text-3xl whitespace-normal">
-                <HighlightText>Traveler&apos;s</HighlightText> Review
-                <LoadImage
-                  src="/assets/home-page/destination/underline.svg"
-                  alt="arrow"
-                  height={7}
-                  width={275}
-                  className="mt-1.5"
-                />
+              <h1 className="lg:text-5xl md:text-4xl text-3xl font-serif whitespace-normal">
+                Review
               </h1>
               <p className="text-base">
-                Discover the Impact of Our Products and Services Through Their
-                Testimonials
+                Discover the Impact of Our stay Through Their Testimonials
               </p>
             </article>
             <div className="text-primary border-b-2 border-b-transparent hover:border-b-primary transition-all">

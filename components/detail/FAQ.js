@@ -71,19 +71,10 @@ const FAQ = () => {
       <Container>
         <div className="w-full h-full flex flex-col gap-y-12">
           <article className="flex flex-col gap-y-4">
-            <h1 className="lg:text-5xl md:text-4xl text-3xl whitespace-normal">
-              <HighlightText>F.A.Q.</HighlightText> from Travellers
-              <LoadImage
-                src="/assets/home-page/destination/underline.svg"
-                alt="arrow"
-                height={7}
-                width={275}
-                className="mt-1.5"
-              />
+            <h1 className="lg:text-5xl md:text-4xl text-3xl font-serif whitespace-normal">
+              F.A.Q.
             </h1>
-            <p className="text-base">
-              Frequently Asked Questions from travelers about this tour
-            </p>
+            <p className="text-base">Frequently Asked Questions</p>
           </article>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
             {faqs.map((faq, index) => (

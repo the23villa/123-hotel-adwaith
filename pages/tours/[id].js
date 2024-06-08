@@ -20,6 +20,7 @@ import { setRent } from "@/features/rent/rentSlice";
 import BestSelling from "@/components/home/bestSelling/BestSelling";
 import MoreRents from "@/components/detail/MoreRents";
 import AllReviews from "@/components/detail/AllReviews";
+import FAQ from "@/components/detail/FAQ";
 
 const DetailPage = () => {
   const router = useRouter();
@@ -72,7 +73,8 @@ const DetailPage = () => {
                   <Right />
                 </div>
                 <AllReviews className="!px-0" />
-                <MoreRents className="!px-0" />
+                {/* <MoreRents className="!px-0" /> */}
+                <FAQ/>
               </div>
             </>
           )}
