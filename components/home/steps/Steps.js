@@ -20,7 +20,7 @@ const Steps = () => {
             </article>
           </div>
 
-          <div className="grid md:items-center gap-12 md:grid-cols-1 grid-cols-1">
+          <div className="w-full grid md:items-center gap-12 md:grid-cols-1 grid-cols-1">
             <div className="grid md:items-center gap-8 grid-cols-12">
               <div className="col-span-12">
                 <BreakdownArticle />

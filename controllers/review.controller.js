@@ -64,7 +64,7 @@ export const getReviews = async () => {
     if (reviews) {
       return {
         success: true,
-        message: "Successfully fetched reviews",
+        message: "Welcome To 123 Booking",
         data: reviews,
       };
     } else {
