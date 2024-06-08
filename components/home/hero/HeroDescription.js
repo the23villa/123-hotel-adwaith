@@ -9,10 +9,10 @@ import React from "react";
 
 const HeroDescription = () => {
   return (
-    <section className="lg:col-span-8 md:col-span-6">
-      <article className="flex flex-col gap-y-12">
-        <div className="flex flex-col gap-y-8">
-          <h1 className="lg:text-7xl md:text-5xl text-white text-3xl whitespace-normal">
+    <section className="lg:col-span-8 md:col-span-6 px-4 md:px-8 py-20 md:py-12 lg:py-1">
+      <article className="flex flex-col gap-y-12 items-center md:items-start">
+        <div className="flex flex-col gap-y-8 text-center md:text-left">
+          <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-7xl text-white whitespace-normal leading-tight">
             Book Your Dream Stay And Make <HighlightText>Memory</HighlightText>
           </h1>
         </div>
