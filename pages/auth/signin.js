@@ -57,7 +57,7 @@ const Signin = () => {
               name="email"
               id="email"
               {...register("email", { required: true })}
-              placeholder="i.e. devhasibulislam@gmail.com"
+              placeholder="i.e. adwaith@gmail.com"
               className=""
             />
           </label>
@@ -68,7 +68,7 @@ const Signin = () => {
               name="password"
               id="password"
               {...register("password", { required: true })}
-              placeholder="i.e. Hasib@123"
+              placeholder="i.e. adwai123"
               className=""
             />
           </label>
