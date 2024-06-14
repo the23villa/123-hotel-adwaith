@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on AllReviews
-.
- * Date: 05, February 2024
- */
-
 import React, { useEffect, useMemo, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 import { RiChatQuoteFill } from "react-icons/ri";
@@ -12,13 +6,10 @@ import "keen-slider/keen-slider.min.css";
 import Container from "../shared/container/Container";
 import HighlightText from "../shared/highlightText/HighlightText";
 import LoadImage from "../shared/image/LoadImage";
-import Link from "next/link";
 import { LiaPlusSolid } from "react-icons/lia";
 import { useSelector } from "react-redux";
 import Modal from "../shared/modal/Modal";
 import { useForm, Controller } from "react-hook-form";
-import { CiStar } from "react-icons/ci";
-import { IoStarSharp } from "react-icons/io5";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 import { useAddReviewMutation } from "@/services/review/reviewApi";
 import { toast } from "react-hot-toast";
@@ -59,13 +50,19 @@ const AllReviews = ({ className }) => {
     loop: true,
     initial: 0,
     created(s) {
-      s.moveToIdx(5, true, animation);
+      if (window.innerWidth > 768) {
+        s.moveToIdx(5, true, animation);
+      }
     },
     updated(s) {
-      s.moveToIdx(s.track.details.abs + 5, true, animation);
+      if (window.innerWidth > 768) {
+        s.moveToIdx(s.track.details.abs + 5, true, animation);
+      }
     },
     animationEnded(s) {
-      s.moveToIdx(s.track.details.abs + 5, true, animation);
+      if (window.innerWidth > 768) {
+        s.moveToIdx(s.track.details.abs + 5, true, animation);
+      }
     },
     breakpoints: {
       "(max-width: 768px)": {
@@ -73,6 +70,7 @@ const AllReviews = ({ className }) => {
           perView: 1,
           spacing: 15,
         },
+        loop: false,
       },
       "(min-width: 768px)": {
         slides: {
@@ -217,7 +215,7 @@ const AllReviews = ({ className }) => {
                     name="comment"
                     id="comment"
                     rows="5"
-                    maxlength="500"
+                    maxLength="500"
                     placeholder="Write your thoughts..."
                     className="w-full"
                   ></textarea>

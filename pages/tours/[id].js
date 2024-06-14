@@ -17,10 +17,9 @@ import { useGetRentQuery } from "@/services/rent/rentApi";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setRent } from "@/features/rent/rentSlice";
-import BestSelling from "@/components/home/bestSelling/BestSelling";
-import MoreRents from "@/components/detail/MoreRents";
 import AllReviews from "@/components/detail/AllReviews";
 import FAQ from "@/components/detail/FAQ";
+import Location from "@/components/detail/Location";
 
 const DetailPage = () => {
   const router = useRouter();
@@ -70,10 +69,11 @@ const DetailPage = () => {
               <div className="h-full w-full flex flex-col gap-y-8">
                 <div className="grid grid-cols-12 gap-8">
                   <Left />
-                  <Right />
+                  {/* <Right /> */}
                 </div>
                 <AllReviews className="!px-0" />
                 {/* <MoreRents className="!px-0" /> */}
+                <Location location={tour?.location} />
                 <FAQ/>
               </div>
             </>

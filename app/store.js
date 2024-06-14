@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Store
-.
- * Date: 17, August 2023
- */
-
 import authSlice from "@/features/auth/authSlice";
 import bookingSlice from "@/features/booking/bookingSlice";
 import filterSlice from "@/features/filter/filterSlice";

@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on TravelPrice
-.
- * Date: 17, August 2023
- */
-
 import React, { useEffect, useState } from "react";
 import OutsideClick from "@/components/shared/outsideClick/OutsideClick";
 import { BiChevronDown } from "react-icons/bi";
@@ -54,7 +48,7 @@ const TravelPrice = () => {
             {travelAvailability?.priceRange?.start &&
             travelAvailability?.priceRange?.end ? (
               <>
-                ${travelAvailability?.priceRange?.start} - $
+                ₹{travelAvailability?.priceRange?.start} - ₹
                 {travelAvailability?.priceRange?.end}
               </>
             ) : (
@@ -106,12 +100,12 @@ const TravelPrice = () => {
                   <div className="flex flex-col gap-y-2">
                     <p className="flex justify-between items-center">
                       <span className="text-xs">Start</span>
-                      <span className="text-xs">${minPrice}</span>
+                      <span className="text-xs">₹{minPrice}</span>
                     </p>
                     <input
                       type="range"
                       min="0"
-                      max="1000"
+                      max="100000"
                       step="1"
                       value={minPrice}
                       onChange={handleMinPriceChange}
@@ -121,12 +115,12 @@ const TravelPrice = () => {
                   <div className="flex flex-col gap-y-2">
                     <p className="flex justify-between items-center">
                       <span className="text-xs">End</span>
-                      <span className="text-xs">${maxPrice}</span>
+                      <span className="text-xs">₹{maxPrice}</span>
                     </p>
                     <input
                       type="range"
                       min="0"
-                      max="1000"
+                      max="100000"
                       step="1"
                       value={maxPrice}
                       onChange={handleMaxPriceChange}

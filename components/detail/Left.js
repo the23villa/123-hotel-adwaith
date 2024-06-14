@@ -1,15 +1,9 @@
-/**
- * Title: Write a program using JavaScript on Left
-.
- * Date: 19, October 2023
- */
-
 import React, { useEffect } from "react";
+import Right from "@/components/detail/Right";
 import LoadImage from "@/components/shared/image/LoadImage";
 import { AiOutlineCalendar, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { BiCodeAlt } from "react-icons/bi";
 import { FiUsers } from "react-icons/fi";
-import { MdAttachMoney, MdOutlineAddShoppingCart } from "react-icons/md";
+import { FaRupeeSign } from "react-icons/fa";
 import {
   useAddToCartMutation,
   useRemoveFromCartMutation,
@@ -30,6 +24,8 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -45,6 +41,21 @@ const Left = () => {
   const members = watch("members");
   const duration = watch("duration");
   const price = watch("price");
+
+  const [sliderRef] = useKeenSlider({
+    loop: true,
+    breakpoints: {
+      "(max-width: 768px)": {
+        slides: { perView: 1, spacing: 10 },
+      },
+      "(min-width: 768px)": {
+        slides: { perView: 1, spacing: 10 },
+      },
+      "(min-width: 1080px)": {
+        slides: { perView: 1, spacing: 10 },
+      },
+    },
+  });
 
   useEffect(() => {
     setValue("price", tour?.price * members);
@@ -136,22 +147,26 @@ const Left = () => {
   return (
     <>
       <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
-        <div className="grid grid-cols-12 gap-4">
+        <div
+          ref={sliderRef}
+          className="keen-slider grid grid-cols-1 gap-1 mt-10"
+        >
           {tour?.gallery?.map((thumbnail, index) => (
             <LoadImage
               key={index}
               src={thumbnail?.url}
               alt={thumbnail?.public_id}
               className={
-                "rounded object-center max-w-full w-full" +
+                "rounded object-center max-w-full h-96 keen-slider__slide" +
                 " " +
                 getColumnSpanClass(index, tour.gallery.length)
               }
-              width={480}
+              width={680}
               height={200}
             />
           ))}
         </div>
+        <Right />
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
           <div className="flex flex-col gap-y-2">
             <h2 className="text-lg">Booking Now</h2>
@@ -169,7 +184,7 @@ const Left = () => {
                 control={control}
                 rules={{ required: true }}
                 name="duration.startDate"
-                defaultValue={formatDate(tour?.duration?.startDate)} // Set defaultValue
+                defaultValue={formatDate(tour?.duration?.startDate)}
                 render={({ field }) => (
                   <label
                     htmlFor="startDate"
@@ -195,7 +210,7 @@ const Left = () => {
                 control={control}
                 rules={{ required: true }}
                 name="duration.endDate"
-                defaultValue={formatDate(tour?.duration?.endDate)} // Set defaultValue
+                defaultValue={formatDate(tour?.duration?.endDate)}
                 render={({ field }) => (
                   <label
                     htmlFor="endDate"
@@ -217,6 +232,26 @@ const Left = () => {
                   </label>
                 )}
               />
+
+              <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-md border-t border-gray-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold flex flex-col">
+                    <div className="flex items-center">
+                      <FaRupeeSign className="ml-1" />
+                      {price}
+                    </div>
+                    <div className="font-serif font-light text-base">
+                      Total amount
+                    </div>
+                  </span>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-primary text-white rounded"
+                  >
+                    Book Now
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="flex md:flex-row flex-col justify-between gap-2">
@@ -247,69 +282,6 @@ const Left = () => {
                   </label>
                 )}
               />
-
-              <Controller
-                control={control}
-                name="price"
-                defaultValue={tour?.price}
-                render={({ field }) => (
-                  <label
-                    htmlFor="price"
-                    className="flex flex-row gap-x-2 items-center w-full"
-                  >
-                    <input
-                      {...field}
-                      type="number"
-                      name="price"
-                      id="price"
-                      className="rounded-secondary h-8 w-full flex-1"
-                      placeholder="Pricing Amount"
-                      value={tour?.price * members}
-                    />
-                    <span className="h-8 w-8 rounded-secondary border border-black flex justify-center items-center p-1.5">
-                      <MdAttachMoney className="w-6 h-6" />
-                    </span>
-                  </label>
-                )}
-              />
-            </div>
-            <div className="flex flex-row gap-x-2 items-center mt-2">
-              <button
-                type="submit"
-                className="bg-primary hover:bg-secondary hover:text-primary hover:border-primary border border-transparent text-white p-1.5 rounded-primary flex justify-center items-center transition-all delay-100 text-sm w-full"
-              >
-                Book Now
-              </button>
-              {/* <Checkout members={members} duration={duration} /> */}
-              {user?.cart?.rents?.some((rent) => rent?._id === tour?._id) ? (
-                <button
-                  type="button"
-                  className="bg-primary hover:bg-secondary hover:text-primary hover:border-primary border border-transparent text-white p-1.5 rounded-primary flex justify-center items-center transition-all delay-100 text-sm"
-                  onClick={() => removeFromCart(tour?._id)}
-                >
-                  {removeFromCartLoading ? (
-                    <AiOutlineLoading3Quarters className="animate-spin h-5 w-5" />
-                  ) : (
-                    <IoCheckmarkSharp className="h-5 w-5" />
-                  )}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="bg-primary hover:bg-secondary hover:text-primary hover:border-primary border border-transparent text-white p-1.5 rounded-primary flex justify-center items-center transition-all delay-100 text-sm"
-                  onClick={() =>
-                    addToCart({
-                      rent: tour?._id,
-                    })
-                  }
-                >
-                  {addToCartLoading ? (
-                    <AiOutlineLoading3Quarters className="animate-spin h-5 w-5" />
-                  ) : (
-                    <MdOutlineAddShoppingCart className="h-5 w-5" />
-                  )}
-                </button>
-              )}
             </div>
           </form>
         </div>
@@ -540,10 +512,9 @@ function Checkout({ rent, setIsOpen, members }) {
                 </label>
               )}
             />
-
             <div className="text-sm flex flex-col gap-y-1">
               <p className="flex flex-row justify-between items-center">
-                <span className="">Cost Per Night ($)</span>
+                <span className="">Cost Per Night (₹)</span>
                 <span className="">{rent?.price}</span>
               </p>
               <p className="flex flex-row justify-between items-center">
@@ -552,7 +523,7 @@ function Checkout({ rent, setIsOpen, members }) {
               </p>
               <hr />
               <p className="flex flex-row justify-between items-center">
-                <span className="">Total Cost ($)</span>
+                <span className="">Total Cost (₹)</span>
                 <span className="">{members * rent?.price}</span>
               </p>
             </div>

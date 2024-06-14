@@ -4,6 +4,8 @@ import Container from "../container/Container";
 import UserMenu from "./userMenu/UserMenu";
 
 const Navbar = () => {
+  const isHomePage = location.pathname === "/";
+
   return (
     <>
       <header className="absolute top-0 left-0 w-full z-10">
@@ -19,17 +21,19 @@ const Navbar = () => {
         </Container>
       </header>
 
-      <footer className="lg:hidden fixed bottom-0 left-0 w-full z-10 bg-white">
-        <Container>
-          <nav className="py-4">
-            <section className="flex flex-row">
-              <div className="flex-1"></div>
-              <UserMenu />
-              <div className="flex-1"></div>
-            </section>
-          </nav>
-        </Container>
-      </footer>
+      {isHomePage && (
+        <footer className="lg:hidden fixed bottom-0 left-0 w-full z-10 bg-white">
+          <Container>
+            <nav className="py-4">
+              <section className="flex flex-row">
+                <div className="flex-1"></div>
+                <UserMenu />
+                <div className="flex-1"></div>
+              </section>
+            </nav>
+          </Container>
+        </footer>
+      )}
     </>
   );
 };

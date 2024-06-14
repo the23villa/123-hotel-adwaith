@@ -1,15 +1,10 @@
-/**
- * Title: Write a program using JavaScript on Right
-.
- * Date: 19, October 2023
- */
-
 import React from "react";
 import { AiFillStar } from "react-icons/ai";
 import { BsSignTurnRight } from "react-icons/bs";
-import Location from "./Location";
 import { useSelector } from "react-redux";
-import { FaUsers } from "react-icons/fa";
+import { FaUsers, FaParking } from "react-icons/fa";
+import { RiWifiLine } from "react-icons/ri";
+import { GiKnifeFork, GiSwimmingPoo, GiWeightLiftingUp } from "react-icons/gi";
 
 const Right = () => {
   const tour = useSelector((state) => state?.rent);
@@ -37,6 +32,31 @@ const Right = () => {
           <div className="flex flex-col gap-y-1.5">
             <h2 className="md:text-xl text-lg">Summary</h2>
             <p className="text-sm">{tour?.summary}</p>
+          </div>
+          <div className="flex flex-col gap-y-1.5">
+            <h2 className="md:text-xl text-lg">Amenities</h2>
+            <div className="flex flex-row flex-wrap gap-2">
+              {tour?.amenities?.map((amenity, index) => (
+                <span
+                  key={index}
+                  className="text-xs flex items-center gap-x-1 py-0.5 px-2 bg-indigo-50 text-indigo-800 border border-indigo-500 rounded-secondary"
+                >
+                  {amenity === "wifi" && (
+                    <RiWifiLine className="w-4 h-4 text-indigo-800" />
+                  )}
+                  {amenity === "dining" && (
+                    <GiKnifeFork className="w-4 h-4 text-indigo-800" />
+                  )}
+                  {amenity === "parking" && (
+                    <FaParking className="w-4 h-4 text-indigo-800" />
+                  )}
+                  {amenity === "gym" && (
+                    <GiWeightLiftingUp className="w-4 h-4 text-indigo-800" />
+                  )}
+                  {amenity}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="flex flex-col gap-y-1.5">
             <h2 className="md:text-xl text-lg">Important Information</h2>
@@ -70,7 +90,6 @@ const Right = () => {
               ))}
             </div>
           </div>
-          <Location location={tour?.location} />
         </div>
       </article>
       <div className=""></div>

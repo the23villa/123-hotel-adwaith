@@ -6,7 +6,6 @@
 
 import React from "react";
 import Search from "../searchTrio/Search";
-import Cart from "../cart/Cart";
 import Favorites from "../favorites/Favorites";
 import MobileMenu from "../mobileMenu/MobileMenu";
 
