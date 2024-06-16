@@ -24,7 +24,7 @@ const Navbar = () => {
       {isHomePage && (
         <footer className="lg:hidden fixed bottom-0 left-0 w-full z-10 bg-white">
           <Container>
-            <nav className="py-4">
+            <nav className="py-2">
               <section className="flex flex-row">
                 <div className="flex-1"></div>
                 <UserMenu />
