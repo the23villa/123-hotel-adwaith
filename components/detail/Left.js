@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Right from "@/components/detail/Right";
 import LoadImage from "@/components/shared/image/LoadImage";
 import { AiOutlineCalendar, AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -42,7 +42,7 @@ const Left = () => {
   const duration = watch("duration");
   const price = watch("price");
 
-  const [sliderRef] = useKeenSlider({
+  const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     breakpoints: {
       "(max-width: 768px)": {
@@ -56,6 +56,15 @@ const Left = () => {
       },
     },
   });
+
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    if (!isMounted.current && instanceRef.current) {
+      instanceRef.current.update();
+      isMounted.current = true;
+    }
+  }, [instanceRef]);
 
   useEffect(() => {
     setValue("price", tour?.price * members);
@@ -147,24 +156,37 @@ const Left = () => {
   return (
     <>
       <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
-        <div
-          ref={sliderRef}
-          className="keen-slider grid grid-cols-1 gap-1 mt-10"
-        >
+        <div ref={sliderRef} className="keen-slider relative">
           {tour?.gallery?.map((thumbnail, index) => (
             <LoadImage
               key={index}
               src={thumbnail?.url}
               alt={thumbnail?.public_id}
-              className={
-                "rounded object-center max-w-full h-96 keen-slider__slide" +
-                " " +
-                getColumnSpanClass(index, tour.gallery.length)
-              }
+              className="rounded mx-auto max-w-full h-96 keen-slider__slide"
               width={680}
               height={200}
             />
           ))}
+          <div className="absolute bottom-4 inset-x-0 flex justify-center items-center">
+            {Array.from({ length: tour?.gallery?.length || 0 }).map(
+              (_, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    backgroundColor:
+                      sliderRef.current?.track.details().absoluteSlide === index
+                        ? "grey"
+                        : "white",
+                    marginRight:
+                      index !== tour?.gallery?.length - 1 ? "8px" : "0",
+                  }}
+                ></div>
+              )
+            )}
+          </div>
         </div>
         <Right />
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">

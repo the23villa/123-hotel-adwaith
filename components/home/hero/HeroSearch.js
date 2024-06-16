@@ -65,9 +65,9 @@ const HeroDescription = () => {
       <div className="flex md:hidden">
         <button
           onClick={handleSearchClick}
-          className="bg-white bg-opacity-40 border-white text-black rounded-full px-4 py-5 w-full"
+          className="bg-white bg-opacity-40 border-white text-black rounded-full px-4 py-3 w-full"
         >
-          Search for location, villa, facilities...
+          Search for location, villa...
         </button>
       </div>
 
