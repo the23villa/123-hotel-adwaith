@@ -446,7 +446,7 @@ function Checkout({ rent, setIsOpen, members }) {
                   <input
                     {...field}
                     type="text"
-                    placeholder="Hasibul Islam"
+                    placeholder="Adwaith viju"
                     className="w-full border rounded p-2"
                   />
                 </label>
@@ -466,7 +466,7 @@ function Checkout({ rent, setIsOpen, members }) {
                   <input
                     {...field}
                     type="email"
-                    placeholder="devhasibulislam@gmail.com"
+                    placeholder="adwaithviju@gmail.com"
                     className="w-full border rounded p-2"
                   />
                 </label>
