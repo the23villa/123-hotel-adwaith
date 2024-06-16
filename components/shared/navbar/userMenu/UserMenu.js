@@ -21,9 +21,7 @@ const UserMenu = () => {
         </div>
         <div className="flex flex-col items-center text-gray-600">
           <Favorites />
-          <span className="mt-1 text-sm text-gray-500 font-serif">
-            Favorites
-          </span>
+          <span className="mt-1 text-sm text-gray-500 font-serif">Wish</span>
         </div>
         <div className="flex flex-col items-center text-gray-600">
           <MobileMenu />
