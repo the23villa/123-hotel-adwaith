@@ -104,7 +104,7 @@ const Checkout = ({ members, duration }) => {
 
                 <div className="mt-auto text-sm flex flex-col gap-y-1">
                   <p className="flex flex-row justify-between items-center">
-                    <span className="">Cost Per Night ($)</span>
+                    <span className="">Cost Per Night (₹)</span>
                     <span className="">{rent?.price}</span>
                   </p>
                   <p className="flex flex-row justify-between items-center">
@@ -113,7 +113,7 @@ const Checkout = ({ members, duration }) => {
                   </p>
                   <hr />
                   <p className="flex flex-row justify-between items-center">
-                    <span className="">Total Cost ($)</span>
+                    <span className="">Total Cost (₹)</span>
                     <span className="">{members * rent?.price}</span>
                   </p>
                 </div>

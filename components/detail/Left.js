@@ -391,7 +391,7 @@ function Checkout({ rent, setIsOpen, members }) {
       ) : (
         <section className="flex flex-col gap-8">
           <article className="h-full w-full flex flex-col gap-y-8">
-            <h1 className="text-xl">Pay Travello Booking</h1>
+            <h1 className="text-xl">Pay 123 Booking</h1>
             <div className="flex flex-col gap-y-2">
               <div className="flex flex-col gap-y-1">
                 <span className="flex -space-x-4">
@@ -536,7 +536,8 @@ function Checkout({ rent, setIsOpen, members }) {
             />
             <div className="text-sm flex flex-col gap-y-1">
               <p className="flex flex-row justify-between items-center">
-                <span className="">Cost Per Night (₹)</span>
+                <span className="">Cost Per Night (
+                  )</span>
                 <span className="">{rent?.price}</span>
               </p>
               <p className="flex flex-row justify-between items-center">
