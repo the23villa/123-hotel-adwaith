@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Create-payment-intent
-.
- * Date: 06, February 2024
- */
-
 import { createPaymentIntent } from "@/controllers/payment.controller";
 import authorization from "@/middleware/authorization.middleware";
 import verify from "@/middleware/verify.middleware";

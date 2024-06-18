@@ -1,10 +1,34 @@
+import nodemailer from "nodemailer";
 import Purchase from "@/models/purchase.model";
 import Rent from "@/models/rent.model";
 import User from "@/models/user.model";
-
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-export async function createPaymentIntent(req) {
+async function sendEmail(to, subject, text) {
+  // Configure SMTP transport
+  const transporter = nodemailer.createTransport({
+    host: "smtpout.secureserver.net",
+    secure: false,
+    port: 587,
+    auth: {
+      user: "contact@saintiant.tech",
+      pass: "Saint@206",
+    },
+  });
+
+  // Prepare email options
+  const mailOptions = {
+    from: "contact@saintiant.tech",
+    to: to,
+    subject: subject,
+    text: text,
+  };
+
+  // Send email
+  await transporter.sendMail(mailOptions);
+}
+
+export async function createPaymentIntent(req, res) {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(req.body.price * 100),
@@ -35,16 +59,25 @@ export async function createPaymentIntent(req) {
         },
       });
 
-      return {
+      // Send email notification
+      const user = await User.findById(req.user._id);
+      await sendEmail(
+        user.email,
+        "Payment Completed Successfully",
+        `Thank you for your payment of ${req.body.price}. Your booking is confirmed.`
+      );
+
+      // Send response
+      return res.status(200).json({
         success: true,
-        message: "Payment intent created successfully",
+        message: "Payment intent created and email sent successfully",
         clientSecret: paymentIntent.client_secret,
-      };
+      });
     }
   } catch (error) {
-    return {
+    return res.status(500).json({
       success: false,
       message: error.message,
-    };
+    });
   }
 }

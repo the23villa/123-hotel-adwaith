@@ -1,21 +1,30 @@
-/**
- * Title: Write a program using JavaScript on NewsLetter
-.
- * Date: 07, October 2023
- */
-
+import axios from "axios";
+import React, { useState } from "react";
+import LoadImage from "@/components/shared/image/LoadImage";
 import Button from "@/components/shared/button/Button";
 import Container from "@/components/shared/container/Container";
-import LoadImage from "@/components/shared/image/LoadImage";
-import React, { useState } from "react";
 import { BiHotel } from "react-icons/bi";
 
 const NewsLetter = () => {
   const [showAdditionalContent, setShowAdditionalContent] = useState(false);
   const [visible, setVisible] = useState(false);
-
+  const [email, setEmail] = useState(''); 
   const toggleAdditionalContent = () => {
     setShowAdditionalContent(!showAdditionalContent);
+  };
+
+  const handleSubscribe = async () => {
+    try {
+      const response = await axios.post("/api/subscribe", { email });
+      if (response.data.success) {
+        setVisible(true);
+        // Additional logic if needed
+      } else {
+        // Handle error
+      }
+    } catch (error) {
+      // Handle error
+    }
   };
 
   return (
@@ -109,10 +118,12 @@ const NewsLetter = () => {
                       disabled={visible}
                       placeholder="Enter your email"
                       className="w-full rounded border-1 border-primary text-sm z-50"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                     <Button
                       className="px-4 py-1 text-xs"
-                      onClick={() => setVisible(true)}
+                      onClick={handleSubscribe}
                     >
                       Subscribe
                     </Button>

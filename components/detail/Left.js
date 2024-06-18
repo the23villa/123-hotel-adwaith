@@ -536,8 +536,7 @@ function Checkout({ rent, setIsOpen, members }) {
             />
             <div className="text-sm flex flex-col gap-y-1">
               <p className="flex flex-row justify-between items-center">
-                <span className="">Cost Per Night (
-                  )</span>
+                <span className="">Cost Per Night ( )</span>
                 <span className="">{rent?.price}</span>
               </p>
               <p className="flex flex-row justify-between items-center">
