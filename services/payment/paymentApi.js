@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on PaymentApi
-.
- * Date: 06, February 2024
- */
-
 const { travelloApi } = require("../travello");
 
 const paymentApi = travelloApi.injectEndpoints({

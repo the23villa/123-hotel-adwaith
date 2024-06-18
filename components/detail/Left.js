@@ -9,27 +9,15 @@ import {
   useRemoveFromCartMutation,
 } from "@/services/cart/cartApi";
 import { useDispatch, useSelector } from "react-redux";
-import { IoCheckmarkSharp } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import Modal from "../shared/modal/Modal";
 import { setBooking } from "@/features/booking/bookingSlice";
 import { useCreatePaymentIntentMutation } from "@/services/payment/paymentApi";
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
 
 const Left = () => {
   const [isOpen, setIsOpen] = useState(false);
