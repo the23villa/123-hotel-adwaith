@@ -1,8 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Signup
-.
- */
-
 import { signUpUser } from "@/controllers/auth.controller";
 import upload from "@/middleware/upload.middleware";
 

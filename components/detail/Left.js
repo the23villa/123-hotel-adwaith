@@ -9,12 +9,14 @@ import {
   useRemoveFromCartMutation,
 } from "@/services/cart/cartApi";
 import { useDispatch, useSelector } from "react-redux";
+import { IoCheckmarkSharp } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import Modal from "../shared/modal/Modal";
 import { setBooking } from "@/features/booking/bookingSlice";
 import { useCreatePaymentIntentMutation } from "@/services/payment/paymentApi";
+import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
@@ -315,245 +317,295 @@ function Checkout({ rent, setIsOpen, members }) {
   const user = useSelector((state) => state?.auth);
   const [createPaymentIntent, { isLoading, data, error }] =
     useCreatePaymentIntentMutation();
-  const { control, handleSubmit } = useForm({
+
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [orderId, setOrderId] = useState(null);
+  const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
+  const { control } = useForm({
     defaultValues: {
-      name: user?.name,
       email: user?.email,
     },
   });
 
   useEffect(() => {
     if (isLoading) {
-      toast.loading("Creating Payment Intent...", {
-        id: "paymentIntent",
-      });
+      toast.loading("Processing payment...", { id: "paymentIntent" });
     }
 
     if (data) {
-      toast.success(data?.message, {
-        id: "paymentIntent",
-      });
+      toast.success("Payment intent created", { id: "paymentIntent" });
+      handleRazorpayPayment(data);
     }
 
     if (error?.data) {
-      toast.error(error?.data?.message, {
-        id: "paymentIntent",
-      });
+      toast.error(error?.data?.message, { id: "paymentIntent" });
     }
   }, [data, error, isLoading]);
 
-  function handleIntegratePurchase(data) {
-    console.log(data);
+  function handleRazorpayPayment(paymentData) {
+    setIsRazorpayOpen(true);
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: paymentData.amount,
+      currency: paymentData.currency,
+      name: "The 23 Villa",
+      description: `Payment for ${rent?.title}`,
+      order_id: paymentData.orderId,
+      handler: function (response) {
+        setIsRazorpayOpen(false);
+        toast.success("Payment Successful");
+        setShowSuccess(true);
+        setOrderId(response.razorpay_order_id);
+        // Display success modal
+        setIsOpen(true);
+        // After user confirms the details, send confirmation email
+        sendConfirmationEmail({
+          rent: rent?._id,
+          price: rent?.price * members,
+          members: members,
+          duration: booking?.duration,
+          email: user?.email,
+          orderId: response.razorpay_order_id,
+          amount: paymentData.amount,
+          currency: paymentData.currency,
+        });
+      },
+      modal: {
+        ondismiss: function () {
+          setIsRazorpayOpen(false);
+        },
+      },
+      prefill: {
+        name: user?.name,
+        email: user?.email,
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+  
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  }
+  
+  async function sendConfirmationEmail(data) {
+    try {
+      const response = await fetch('/api/sendConfirmationEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      const result = await response.json();
+      if (result.success) {
+        toast.success("Confirmation email sent successfully");
+      } else {
+        toast.error("Failed to send confirmation email");
+      }
+    } catch (error) {
+      toast.error("Error sending confirmation email");
+    }
+  }function handleRazorpayPayment(paymentData) {
+    setIsRazorpayOpen(true);
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: paymentData.amount,
+      currency: paymentData.currency,
+      name: "The 23 Villa",
+      description: `Payment for ${rent?.title}`,
+      order_id: paymentData.orderId,
+      handler: function (response) {
+        setIsRazorpayOpen(false);
+        toast.success("Payment Successful");
+        setShowSuccess(true);
+        setOrderId(response.razorpay_order_id);
+        // Display success modal
+        setIsOpen(true);
+        // After user confirms the details, send confirmation email
+        sendConfirmationEmail({
+          rent: rent?._id,
+          price: rent?.price * members,
+          members: members,
+          duration: booking?.duration,
+          email: user?.email,
+          orderId: response.razorpay_order_id,
+          amount: paymentData.amount,
+          currency: paymentData.currency,
+        });
+      },
+      modal: {
+        ondismiss: function () {
+          setIsRazorpayOpen(false);
+        },
+      },
+      prefill: {
+        name: user?.name,
+        email: user?.email,
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+  
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  }
+  
+  async function sendConfirmationEmail(data) {
+    try {
+      const response = await fetch('/api/sendConfirmationEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      const result = await response.json();
+      if (result.success) {
+        toast.success("Confirmation email sent successfully");
+      } else {
+        toast.error("Failed to send confirmation email");
+      }
+    } catch (error) {
+      toast.error("Error sending confirmation email");
+    }
+  }
 
+  function handlePaymentClick() {
     createPaymentIntent({
       rent: rent?._id,
-      ...booking,
+      price: rent?.price * members,
+      members: members,
+      duration: booking?.duration,
+      email: user?.email,
     });
   }
 
-  return (
-    <>
-      {data?.success ? (
-        <div className="h-full w-full flex flex-col justify-center items-center gap-4">
-          <Image
-            src="/check.gif"
-            alt="check"
-            height={200}
-            width={200}
-            className=""
-          />
-          <code
-            className="text-xs bg-slate-100 p-2 rounded text-center"
-            onClick={() => navigator.clipboard.writeText(data?.clientSecret)}
-          >
-            {data?.clientSecret}
-          </code>
-          <button
-            type="button"
-            className="py-2 px-4 text-primary bg-primary/10 border border-primary hover:bg-secondary rounded w-fit text-sm flex flex-row justify-center items-center"
-            onClick={() => setIsOpen(false)}
-          >
-            Close
-          </button>
+  if (showSuccess) {
+    return (
+      <div className="h-full w-full flex flex-col justify-center items-center gap-4">
+        <Image
+          src="/check.gif"
+          alt="check"
+          height={200}
+          width={200}
+          className=""
+        />
+        <h2 className="text-xl font-semibold">Payment Successful!</h2>
+        <div className="text-center">
+          <p className="font-medium">{rent?.title}</p>
+          <p>
+            Dates: {booking?.duration?.startDate} to{" "}
+            {booking?.duration?.endDate}
+          </p>
+          <p>Members: {members}</p>
+          <p>Total Amount: ₹{members * rent?.price}</p>
         </div>
-      ) : (
-        <section className="flex flex-col gap-8">
-          <article className="h-full w-full flex flex-col gap-y-8">
-            <h1 className="text-xl">Pay 123 Booking</h1>
-            <div className="flex flex-col gap-y-2">
-              <div className="flex flex-col gap-y-1">
-                <span className="flex -space-x-4">
-                  {rent?.gallery?.map((gallery) => (
-                    <LoadImage
-                      key={gallery?._id}
-                      src={gallery?.url}
-                      alt={gallery?.public_id}
-                      height={30}
-                      width={30}
-                      className="h-[30px] w-[30px] rounded-secondary border border-primary object-cover"
-                    />
-                  ))}
-                </span>
-                <h2 className="text-lg">{rent?.title}</h2>
-              </div>
-              <p className="text-sm">{rent?.summary}</p>
-              <p className="flex flex-row items-center justify-center gap-x-2 overflow-x-auto scrollbar-hide">
-                <span className="text-xs py-0.5 px-2 bg-indigo-50 text-indigo-800 border border-indigo-500 rounded-secondary capitalize w-fit whitespace-nowrap">
-                  {rent?.location}
-                </span>
-                <span className="text-xs py-0.5 px-2 bg-purple-50 text-purple-800 border border-purple-500 rounded-secondary capitalize w-fit whitespace-nowrap">
-                  {rent?.owner?.name}
-                </span>
-                <hr className="w-4 bg-black rotate-90" />
-                <span className="text-xs py-0.5 px-2 bg-teal-50 text-teal-800 border border-teal-500 rounded-secondary capitalize w-fit whitespace-nowrap">
-                  {booking?.duration?.startDate}
-                </span>
-                →
-                <span className="text-xs py-0.5 px-2 bg-cyan-50 text-cyan-800 border border-cyan-500 rounded-secondary capitalize w-fit whitespace-nowrap">
-                  {booking?.duration?.endDate}
-                </span>
-              </p>
-            </div>
-          </article>
+        <code
+          className="text-xs bg-slate-100 p-2 rounded text-center"
+          onClick={() => navigator.clipboard.writeText(orderId)}
+        >
+          Order ID: {orderId}
+        </code>
+        <button
+          type="button"
+          className="py-2 px-4 text-primary bg-primary/10 border border-primary hover:bg-secondary rounded w-fit text-sm flex flex-row justify-center items-center"
+          onClick={() => setIsOpen(false)}
+        >
+          Close
+        </button>
+      </div>
+    );
+  }
 
-          <form
-            action=""
-            className="flex flex-col gap-y-4"
-            onSubmit={handleSubmit(handleIntegratePurchase)}
-          >
-            <Controller
-              control={control}
-              name="name"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <label
-                  htmlFor="name"
-                  className="w-full text-sm flex flex-col gap-y-1"
-                >
-                  Enter Card Name*
-                  <input
-                    {...field}
-                    type="text"
-                    placeholder="Adwaith viju"
-                    className="w-full border rounded p-2"
-                  />
-                </label>
-              )}
-            />
+  return (
+    <section className="flex flex-col gap-8">
+      <article className="h-full w-full flex flex-col gap-y-4">
+        <h1 className="text-xl font-semibold">{rent?.title}</h1>
+        <div className="flex flex-col gap-y-2">
+          <div className="flex -space-x-4">
+            {rent?.gallery?.slice(0, 3).map((gallery) => (
+              <LoadImage
+                key={gallery?._id}
+                src={gallery?.url}
+                alt={gallery?.public_id}
+                height={40}
+                width={40}
+                className="h-[40px] w-[40px] rounded-full border border-primary object-cover"
+              />
+            ))}
+          </div>
+          <p className="text-sm">{rent?.summary}</p>
+          <div className="flex flex-wrap gap-2">
+            <span className="text-xs py-0.5 px-2 bg-indigo-50 text-indigo-800 border border-indigo-500 rounded-full capitalize">
+              {rent?.location}
+            </span>
+            <span className="text-xs py-0.5 px-2 bg-purple-50 text-purple-800 border border-purple-500 rounded-full capitalize">
+              {rent?.owner?.name}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span>
+              Dates: {booking?.duration?.startDate} to{" "}
+              {booking?.duration?.endDate}
+            </span>
+            <span>Members: {members}</span>
+          </div>
+        </div>
+      </article>
 
-            <Controller
-              control={control}
-              name="email"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <label
-                  htmlFor="email"
-                  className="w-full text-sm flex flex-col gap-y-1"
-                >
-                  Enter Card Email*
-                  <input
-                    {...field}
-                    type="email"
-                    placeholder="adwaithviju@gmail.com"
-                    className="w-full border rounded p-2"
-                  />
-                </label>
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="card"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <label
-                  htmlFor="card"
-                  className="w-full text-sm flex flex-col gap-y-1"
-                >
-                  Enter Card Number*
-                  <input
-                    {...field}
-                    type="text"
-                    placeholder="4242 4242 4242 4242"
-                    className="w-full border rounded p-2"
-                    pattern="\d*"
-                    maxlength="16"
-                  />
-                </label>
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="expiry"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <label
-                  htmlFor="expiry"
-                  className="w-full text-sm flex flex-col gap-y-1 flex-1"
-                >
-                  Enter Card Expiry*
-                  <input
-                    {...field}
-                    type="date"
-                    placeholder="12/23"
-                    className="w-full border rounded p-2"
-                  />
-                </label>
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="cvc"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <label
-                  htmlFor="cvc"
-                  className="w-full text-sm flex flex-col gap-y-1 flex-1"
-                >
-                  Enter Card CVC*
-                  <input
-                    {...field}
-                    type="number"
-                    placeholder="123"
-                    className="w-full border rounded p-2"
-                  />
-                </label>
-              )}
-            />
-            <div className="text-sm flex flex-col gap-y-1">
-              <p className="flex flex-row justify-between items-center">
-                <span className="">Cost Per Night ( )</span>
-                <span className="">{rent?.price}</span>
-              </p>
-              <p className="flex flex-row justify-between items-center">
-                <span className="">Overall Members</span>
-                <span className="">{members}</span>
-              </p>
-              <hr />
-              <p className="flex flex-row justify-between items-center">
-                <span className="">Total Cost (₹)</span>
-                <span className="">{members * rent?.price}</span>
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="py-2 text-primary bg-primary/10 border border-primary hover:bg-secondary rounded w-full mt-2 text-sm flex flex-row justify-center items-center"
+      <div className="text-sm flex flex-col gap-y-2">
+        <p className="flex justify-between items-center">
+          <span>Cost Per Night</span>
+          <span>₹{rent?.price}</span>
+        </p>
+        <p className="flex justify-between items-center">
+          <span>Number of Members</span>
+          <span>{members}</span>
+        </p>
+        <hr />
+        <p className="flex justify-between items-center font-semibold">
+          <span>Total Cost</span>
+          <span>₹{members * rent?.price}</span>
+        </p>
+      </div>
+      
+      
+      <Controller
+          control={control}
+          name="email"
+          rules={{ required: true }}
+          render={({ field }) => (
+            <label
+              htmlFor="email"
+              className="w-full text-sm flex flex-col gap-y-1"
             >
-              {isLoading ? (
-                <AiOutlineLoading3Quarters className="animate-spin h-5 w-5" />
-              ) : (
-                "Pay Now"
-              )}
-            </button>
-          </form>
-        </section>
-      )}
-    </>
+              Enter Card Email*
+              <input
+                {...field}
+                type="email"
+                placeholder="adwaithviju@gmail.com"
+                className="w-full border rounded p-2"
+              />
+            </label>
+          )}
+        />
+
+      <button
+        type="button"
+        onClick={handlePaymentClick}
+        disabled={isLoading || isRazorpayOpen}
+        className="py-2 text-white bg-primary hover:bg-primary-dark rounded w-full mt-2 text-sm flex justify-center items-center"
+      >
+        {isLoading || isRazorpayOpen ? (
+          <AiOutlineLoading3Quarters className="animate-spin h-5 w-5 mr-2" />
+        ) : null}
+        Pay with Razorpay
+      </button>
+    </section>
   );
 }
-
 export default Left;

@@ -1,7 +1,6 @@
 import Purchase from "@/models/purchase.model";
 import Rent from "@/models/rent.model";
 import User from "@/models/user.model";
-import nodemailer from 'nodemailer';
 
 const Razorpay = require("razorpay");
 const razorpayInstance = new Razorpay({
@@ -9,44 +8,13 @@ const razorpayInstance = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Function to send confirmation email
-async function sendConfirmationEmail(userEmail, purchaseDetails) {
-  // Configure SMTP transport
-  const transporter = nodemailer.createTransport({
-    host: "smtpout.secureserver.net",
-    secure: false,
-    port: 587,
-    auth: {
-      user: "contact@saintiant.tech",
-      pass: "Saint@206"
-    }
-  });
-
-  // Prepare email options
-  const mailOptions = {
-    from: "contact@saintiant.tech",
-    to: userEmail,
-    subject: 'Booking Confirmation',
-    text: `Thank you for your payment. Your villa has been booked successfully!
-           Booking Details:
-           - Rent ID: ${purchaseDetails.rent}
-           - Members: ${purchaseDetails.members}
-           - Order ID: ${purchaseDetails.orderId}
-           - Amount: ${purchaseDetails.amount / 100} ${purchaseDetails.currency}
-           `
-  };
-
-  // Send email
-  await transporter.sendMail(mailOptions);
-}
-
 export async function createPaymentIntent(req) {
   try {
     const paymentOptions = {
-      amount: req.body.price * 100, 
+      amount: req.body.price * 100,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
-      payment_capture: 1, 
+      payment_capture: 1,
     };
 
     const order = await razorpayInstance.orders.create(paymentOptions);
@@ -75,20 +43,9 @@ export async function createPaymentIntent(req) {
         },
       });
 
-      // Send confirmation email
-      await sendConfirmationEmail(req.user.email, {
-        rent: req.body.rent,
-        price: req.body.price,
-        members: req.body.members,
-        duration: req.body.duration,
-        orderId: order.id,
-        amount: order.amount,
-        currency: order.currency
-      });
-
       return {
         success: true,
-        message: "Payment order created and confirmation email sent successfully",
+        message: "Payment order created successfully",
         orderId: order.id,
         amount: order.amount,
         currency: order.currency,
