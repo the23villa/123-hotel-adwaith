@@ -9,14 +9,12 @@ import {
   useRemoveFromCartMutation,
 } from "@/services/cart/cartApi";
 import { useDispatch, useSelector } from "react-redux";
-import { IoCheckmarkSharp } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import Modal from "../shared/modal/Modal";
 import { setBooking } from "@/features/booking/bookingSlice";
 import { useCreatePaymentIntentMutation } from "@/services/payment/paymentApi";
-import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
@@ -31,6 +29,11 @@ const Left = () => {
   const members = watch("members");
   const duration = watch("duration");
   const price = watch("price");
+  const includeFood = watch("includeFood", false);
+  const foodBasePrice = tour?.foodBasePrice || 100;
+  const [foodLabelText, setFoodLabelText] = useState(
+    "check the box to Include food"
+  );
 
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
@@ -57,8 +60,12 @@ const Left = () => {
   }, [instanceRef]);
 
   useEffect(() => {
-    setValue("price", tour?.price * members);
-  }, [members, setValue, tour?.price]);
+    let basePrice = tour?.price * members;
+    if (includeFood) {
+      basePrice += foodBasePrice;
+    }
+    setValue("price", basePrice);
+  }, [members, includeFood, setValue, tour?.price, foodBasePrice]);
 
   const [
     addToCart,
@@ -143,6 +150,33 @@ const Left = () => {
     dispatch(setBooking(data));
   }
 
+  function handleFoodCheckboxChange(event) {
+    const isChecked = event.target.checked;
+    setValue("includeFood", isChecked);
+  }
+
+  useEffect(() => {
+    const startDate = watch("duration.startDate");
+    if (startDate) {
+      const dayOfWeek = new Date(startDate).getDay();
+      if (dayOfWeek === 6) {
+        setValue("includeFood", true);
+        setFoodLabelText("On Saturdays the food is compulsorily included");
+      } else {
+        setFoodLabelText("check the box to Include food");
+      }
+    }
+  }, [watch("duration.startDate"), setValue]);
+
+  useEffect(() => {
+    const startDate = watch("duration.startDate");
+    const endDate = watch("duration.endDate");
+
+    if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+      setValue("duration.endDate", startDate);
+    }
+  }, [watch("duration.startDate"), watch("duration.endDate"), setValue]);
+
   return (
     <>
       <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
@@ -179,6 +213,21 @@ const Left = () => {
           </div>
         </div>
         <Right />
+        <label className="flex flex-col items-start gap-2">
+          <h2 className="text-lg">Food</h2>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeFood}
+              onChange={handleFoodCheckboxChange}
+              disabled={
+                watch("duration.startDate") &&
+                new Date(watch("duration.startDate")).getDay() === 6
+              }
+            />
+            <span>{foodLabelText}</span>
+          </div>
+        </label>
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
           <div className="flex flex-col gap-y-2">
             <h2 className="text-lg">Booking Now</h2>
@@ -202,22 +251,19 @@ const Left = () => {
                     htmlFor="startDate"
                     className="flex flex-row gap-x-2 items-start w-full"
                   >
-                    <span className="h-8 w-8 rounded-secondary border border-black flex justify-center items-center p-1.5">
-                      <AiOutlineCalendar className="w-6 h-6" />
-                    </span>
-                    <input
-                      {...field}
-                      type="date"
-                      name="startDate"
-                      id="startDate"
-                      className="rounded-secondary h-8 w-full flex-1"
-                      onChange={(e) => field.onChange(e.target.value)}
-                      min={formatDate(tour?.duration?.startDate)}
-                      max={formatDate(tour?.duration?.endDate)}
-                    />
+                    <AiOutlineCalendar size={25} />
+                    <div className="flex flex-col items-start gap-y-2 w-full">
+                      <span className="leading-4">Start Date</span>
+                      <input
+                        type="date"
+                        className="input input-sm input-bordered w-full"
+                        {...field}
+                      />
+                    </div>
                   </label>
                 )}
               />
+
               <Controller
                 control={control}
                 rules={{ required: true }}
@@ -228,23 +274,19 @@ const Left = () => {
                     htmlFor="endDate"
                     className="flex flex-row gap-x-2 items-start w-full"
                   >
-                    <input
-                      {...field}
-                      type="date"
-                      name="endDate"
-                      id="endDate"
-                      className="rounded-secondary h-8 w-full flex-1"
-                      onChange={(e) => field.onChange(e.target.value)}
-                      min={formatDate(tour?.duration?.startDate)}
-                      max={formatDate(tour?.duration?.endDate)}
-                    />
-                    <span className="h-8 w-8 rounded-secondary border border-black flex justify-center items-center p-1.5">
-                      <AiOutlineCalendar className="w-6 h-6" />
-                    </span>
+                    <AiOutlineCalendar size={25} />
+                    <div className="flex flex-col items-start gap-y-2 w-full">
+                      <span className="leading-4">End Date</span>
+                      <input
+                        type="date"
+                        className="input input-sm input-bordered w-full"
+                        {...field}
+                        min={watch("duration.startDate")}
+                      />
+                    </div>
                   </label>
                 )}
               />
-
               <div className="fixed bottom-0 left-0 right-0 bg-white z-10 p-4 shadow-md border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold flex flex-col">
@@ -266,7 +308,7 @@ const Left = () => {
               </div>
             </div>
 
-            <div className="flex md:flex-row flex-col justify-between gap-2">
+            <div className="flex md:flex-row mt-2 flex-col justify-between gap-2">
               <Controller
                 control={control}
                 name="members"
@@ -276,7 +318,7 @@ const Left = () => {
                     htmlFor="members"
                     className="flex flex-row gap-x-2 items-center w-full"
                   >
-                    <span className="h-8 w-8 rounded-secondary border border-black flex justify-center items-center p-1.5">
+                    <span className="h-7 w-7 rounded-secondary border-2 border-black flex justify-center items-center p-1.5">
                       <FiUsers className="w-6 h-6" />
                     </span>
                     <input
@@ -284,7 +326,8 @@ const Left = () => {
                       type="number"
                       name="members"
                       id="members"
-                      className="rounded-secondary h-8 w-full flex-1"
+                      placeholder="Members"
+                      className="rounded-secondary h-10 w-full flex-1"
                       defaultValue={field.value || tour?.members}
                       value={field.value}
                       min="1"
@@ -356,9 +399,7 @@ function Checkout({ rent, setIsOpen, members }) {
         toast.success("Payment Successful");
         setShowSuccess(true);
         setOrderId(response.razorpay_order_id);
-        // Display success modal
         setIsOpen(true);
-        // After user confirms the details, send confirmation email
         sendConfirmationEmail({
           rent: rent?._id,
           price: rent?.price * members,
@@ -383,21 +424,21 @@ function Checkout({ rent, setIsOpen, members }) {
         color: "#3399cc",
       },
     };
-  
+
     const rzp = new window.Razorpay(options);
     rzp.open();
   }
-  
+
   async function sendConfirmationEmail(data) {
     try {
-      const response = await fetch('/api/sendConfirmationEmail', {
-        method: 'POST',
+      const response = await fetch("/api/sendConfirmationEmail", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
-  
+
       const result = await response.json();
       if (result.success) {
         toast.success("Confirmation email sent successfully");
@@ -407,7 +448,8 @@ function Checkout({ rent, setIsOpen, members }) {
     } catch (error) {
       toast.error("Error sending confirmation email");
     }
-  }function handleRazorpayPayment(paymentData) {
+  }
+  function handleRazorpayPayment(paymentData) {
     setIsRazorpayOpen(true);
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -421,9 +463,7 @@ function Checkout({ rent, setIsOpen, members }) {
         toast.success("Payment Successful");
         setShowSuccess(true);
         setOrderId(response.razorpay_order_id);
-        // Display success modal
         setIsOpen(true);
-        // After user confirms the details, send confirmation email
         sendConfirmationEmail({
           rent: rent?._id,
           price: rent?.price * members,
@@ -448,21 +488,21 @@ function Checkout({ rent, setIsOpen, members }) {
         color: "#3399cc",
       },
     };
-  
+
     const rzp = new window.Razorpay(options);
     rzp.open();
   }
-  
+
   async function sendConfirmationEmail(data) {
     try {
-      const response = await fetch('/api/sendConfirmationEmail', {
-        method: 'POST',
+      const response = await fetch("/api/sendConfirmationEmail", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
-  
+
       const result = await response.json();
       if (result.success) {
         toast.success("Confirmation email sent successfully");
@@ -572,27 +612,26 @@ function Checkout({ rent, setIsOpen, members }) {
           <span>₹{members * rent?.price}</span>
         </p>
       </div>
-      
-      
+
       <Controller
-          control={control}
-          name="email"
-          rules={{ required: true }}
-          render={({ field }) => (
-            <label
-              htmlFor="email"
-              className="w-full text-sm flex flex-col gap-y-1"
-            >
-              Enter Card Email*
-              <input
-                {...field}
-                type="email"
-                placeholder="adwaithviju@gmail.com"
-                className="w-full border rounded p-2"
-              />
-            </label>
-          )}
-        />
+        control={control}
+        name="email"
+        rules={{ required: true }}
+        render={({ field }) => (
+          <label
+            htmlFor="email"
+            className="w-full text-sm flex flex-col gap-y-1"
+          >
+            Enter Card Email*
+            <input
+              {...field}
+              type="email"
+              placeholder="adwaithviju@gmail.com"
+              className="w-full border rounded p-2"
+            />
+          </label>
+        )}
+      />
 
       <button
         type="button"

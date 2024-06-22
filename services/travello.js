@@ -1,8 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Travello
-.
- * Date: 17, August 2023
- */
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 

@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Index
-.
- * Date: 15, November 2023
- */
-
 import Panel from "@/layouts/Panel";
 import React from "react";
 
