@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Location
-.
- * Date: 21, October 2023
- */
-
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 

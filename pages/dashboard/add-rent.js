@@ -21,7 +21,7 @@ import { toast } from "react-hot-toast";
 const AddRent = () => {
   const [galleryPreview, setGalleryPreview] = useState([]);
   const [addRent, { isLoading, data, error }] = useAddRentMutation();
-  const [country, setCountry] = useState("Bangladesh");
+  const [country, setCountry] = useState("Karjat");
   const { register, handleSubmit, control, reset } = useForm();
   const {
     fields: informationFields,
@@ -58,7 +58,7 @@ const AddRent = () => {
     if (data) {
       toast.success(data?.message, { id: "add-rent" });
       setGalleryPreview([]);
-      setCountry("Bangladesh");
+      setCountry("Karjat");
       reset();
     }
 

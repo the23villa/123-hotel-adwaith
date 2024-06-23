@@ -8,6 +8,7 @@ const Navbar = () => {
 
   return (
     <>
+    {isHomePage && (
       <header className="absolute top-0 left-0 w-full z-10">
         <Container>
           <nav className="py-4 bg-transparent">
@@ -20,6 +21,7 @@ const Navbar = () => {
           </nav>
         </Container>
       </header>
+       )}
 
       {isHomePage && (
         <footer className="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-gray-100">

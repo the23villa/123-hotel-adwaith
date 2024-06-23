@@ -32,14 +32,14 @@ const Logo = () => {
          * 2nd Parameter: Height
          */
         title="logo"
-        width={100}
-        height={100}
+        width={150}
+        height={150}
         style={{
           maxWidth: "100%",
           height: "auto",
         }}
         onClick={() => router.push("/")}
-        className="cursor-pointer object-center max-w-full"
+        className="cursor-pointer object-center max-w-full mr-5"
       />
     </>
   );

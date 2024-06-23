@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 
 const Panel = ({ children }) => {
   const router = useRouter();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const user = useSelector((state) => state?.auth);
 
   const allRoutes = [
