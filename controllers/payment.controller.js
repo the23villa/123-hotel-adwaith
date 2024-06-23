@@ -13,7 +13,9 @@ export function createPaymentIntent(req) {
     try {
       // Validate price
       if (!Number.isInteger(req.body.price) || req.body.price < 1) {
-        throw new Error(`Invalid price: ${req.body.price}. Price must be an integer >= 1 rupee.`);
+        throw new Error(
+          `Invalid price: ${req.body.price}. Price must be an integer >= 1 rupee.`
+        );
       }
 
       const amountInPaise = req.body.price * 100;
@@ -27,7 +29,10 @@ export function createPaymentIntent(req) {
 
       console.log("Price in rupees:", req.body.price);
       console.log("Amount in paise:", amountInPaise);
-      console.log("Razorpay request options:", JSON.stringify(paymentOptions, null, 2));
+      console.log(
+        "Razorpay request options:",
+        JSON.stringify(paymentOptions, null, 2)
+      );
 
       razorpayInstance.orders.create(paymentOptions, (err, order) => {
         if (err) {
@@ -47,9 +52,9 @@ export function createPaymentIntent(req) {
           user: req.user._id,
           orderId: order.id,
           amount: order.amount,
-          currency: order.currency
+          currency: order.currency,
         })
-          .then(purchase => {
+          .then((purchase) => {
             return Promise.all([
               User.findByIdAndUpdate(req.user._id, {
                 $push: {
@@ -60,7 +65,7 @@ export function createPaymentIntent(req) {
                 $push: {
                   users: req.user._id,
                 },
-              })
+              }),
             ]);
           })
           .then(() => {
@@ -72,7 +77,7 @@ export function createPaymentIntent(req) {
               currency: order.currency,
             });
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Database Error:", error);
             reject({
               success: false,
