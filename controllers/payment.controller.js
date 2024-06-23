@@ -11,7 +11,7 @@ const razorpayInstance = new Razorpay({
 export async function createPaymentIntent(req) {
   try {
     const paymentOptions = {
-      amount: req.body.price * 100,
+      amount: req.body.price,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       payment_capture: 1,
@@ -27,7 +27,7 @@ export async function createPaymentIntent(req) {
       user: req.user._id,
       orderId: order.id,
       amount: order.amount,
-      currency: order.currency
+      currency: order.currency,
     });
 
     if (purchase && order) {
@@ -60,10 +60,10 @@ export async function createPaymentIntent(req) {
 }
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     const response = await createPaymentIntent(req);
     res.status(response.success ? 200 : 500).json(response);
   } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
+    res.status(405).json({ success: false, error: "Method not allowed" });
   }
 }

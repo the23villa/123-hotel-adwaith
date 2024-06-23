@@ -64,9 +64,8 @@ const Left = () => {
     if (includeFood) {
       basePrice += foodBasePrice;
     }
-    setValue("price", basePrice);
+    setValue("price", Math.ceil(basePrice));
   }, [members, includeFood, setValue, tour?.price, foodBasePrice]);
-
   const [
     addToCart,
     { isLoading: addToCartLoading, data: addToCartData, error: addToCartError },
@@ -225,7 +224,7 @@ const Left = () => {
                 new Date(watch("duration.startDate")).getDay() === 6
               }
             />
-           <span>{foodLabelText}</span>
+            <span>{foodLabelText}</span>
           </div>
         </label>
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
@@ -451,9 +450,14 @@ function Checkout({ rent, setIsOpen, members }) {
   }
 
   function handlePaymentClick() {
+    const amount = rent?.price * members;
+    console.log("Price:", rent?.price);
+    console.log("Members:", members);
+    console.log("Total amount:", amount);
+
     createPaymentIntent({
       rent: rent?._id,
-      price: rent?.price * members,
+      price: amount * 100,
       members: members,
       duration: booking?.duration,
       email: user?.email,
