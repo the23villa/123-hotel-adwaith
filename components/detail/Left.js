@@ -224,7 +224,7 @@ const Left = () => {
                 new Date(watch("duration.startDate")).getDay() === 6
               }
             />
-            <span>{foodLabelText}</span>
+           <span>{foodLabelText}</span>
           </div>
         </label>
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
@@ -450,14 +450,9 @@ function Checkout({ rent, setIsOpen, members }) {
   }
 
   function handlePaymentClick() {
-    const amount = rent?.price * members;
-    console.log("Price:", rent?.price);
-    console.log("Members:", members);
-    console.log("Total amount:", amount);
-
     createPaymentIntent({
       rent: rent?._id,
-      price: amount * 100,
+      price: rent?.price * members,
       members: members,
       duration: booking?.duration,
       email: user?.email,

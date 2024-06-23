@@ -10,8 +10,13 @@ const razorpayInstance = new Razorpay({
 
 export async function createPaymentIntent(req) {
   try {
+    const amountInPaise = Math.round(req.body.price * 100);
+    if (amountInPaise < 100) {
+      throw new Error("Amount must be at least ₹1");
+    }
+
     const paymentOptions = {
-      amount: req.body.price,
+      amount: amountInPaise,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       payment_capture: 1,
