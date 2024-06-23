@@ -71,8 +71,8 @@ const AddRent = () => {
     const files = event.target.files;
     const previewImages = [];
 
-    if (files.length > 5) {
-      alert("You can only upload a maximum of 5 images.");
+    if (files.length > 15) {
+      alert("You can only upload a maximum of 15 images.");
       window.location.reload();
       return;
     }
@@ -119,7 +119,7 @@ const AddRent = () => {
     }
 
     for (let i = 0; i < amenities.length; i++) {
-      formData.append('amenities', amenities[i]);
+      formData.append("amenities", amenities[i]);
     }
 
     formData.append("duration", JSON.stringify(data.duration));
@@ -339,7 +339,7 @@ const AddRent = () => {
                   {...register(`information.${index}.information`, {
                     required: true,
                   })}
-                  maxlength="100"
+                  maxlength="500"
                 />
                 <button
                   type="button"

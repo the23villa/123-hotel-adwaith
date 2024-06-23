@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Login Persistent
-.
- * Date: 17, November 2023
- */
-
 import { persistUser } from "@/controllers/auth.controller";
 import verify from "@/middleware/verify.middleware";
 

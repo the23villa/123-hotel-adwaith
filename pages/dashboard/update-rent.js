@@ -72,7 +72,6 @@ const UpdateRent = () => {
         endDate: formatDate(rent?.duration?.endDate) || "",
       },
       location: rent?.location || "",
-      foodBasePrice: rent?.foodBasePrice || "",
       type: rent?.type || "",
       information: rent?.information?.map((item) => ({
         information: item,
@@ -94,8 +93,8 @@ const UpdateRent = () => {
     const files = event.target.files;
     const previewImages = [];
 
-    if (files.length > 10) {
-      alert("You can only upload a maximum of 10 images.");
+    if (files.length > 5) {
+      alert("You can only upload a maximum of 5 images.");
       window.location.reload();
       return;
     }
@@ -154,7 +153,6 @@ const UpdateRent = () => {
     formData.append("members", data?.members);
     formData.append("location", data?.location);
     formData.append("type", data?.type);
-    formData.append("foodBasePrice", data?.foodBasePrice);
 
     for (let i = 0; i < information.length; i++) {
       formData.append("information", information[i]);
@@ -271,19 +269,6 @@ const UpdateRent = () => {
               placeholder="Type rent price here..."
               className="rounded"
               {...register("price")}
-            />
-          </label>
-
-          {/* food base price */}
-          <label htmlFor="foodBasePrice" className="flex flex-col gap-y-2">
-            Food Base Price*
-            <input
-              type="number"
-              name="foodBasePrice"
-              id="foodBasePrice"
-              placeholder="Type food base price here..."
-              className="rounded"
-              {...register("foodBasePrice")}
             />
           </label>
 

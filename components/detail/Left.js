@@ -23,6 +23,7 @@ const Left = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state?.auth);
   const tour = useSelector((state) => state?.rent);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { handleSubmit, control, watch, setValue } = useForm();
   const dispatch = useDispatch();
 
@@ -30,7 +31,7 @@ const Left = () => {
   const duration = watch("duration");
   const price = watch("price");
   const includeFood = watch("includeFood", false);
-  const foodBasePrice = tour?.foodBasePrice || 100;
+  const foodBasePrice = tour?.foodBasePrice || 700;
   const [foodLabelText, setFoodLabelText] = useState(
     "check the box to Include food"
   );
@@ -176,6 +177,10 @@ const Left = () => {
     }
   }, [watch("duration.startDate"), watch("duration.endDate"), setValue]);
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <>
       <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
@@ -224,8 +229,57 @@ const Left = () => {
                 new Date(watch("duration.startDate")).getDay() === 6
               }
             />
-           <span>{foodLabelText}</span>
+            <span>{foodLabelText}</span>
           </div>
+          <div
+            className={`mt-4 ${isExpanded ? "" : "max-h-40 overflow-hidden"}`}
+          >
+            <h3 className="text-md font-semibold">Veg (lunch & dinner) 🥦</h3>
+            <p>Time: 1:30 pm to 3 pm</p>
+            <p>We provide lunch, dinner, breakfast and Tea</p>
+            <ul className="list-disc pl-5">
+              <li>Daal</li>
+              <li>
+                Paneer mutter /Mix veg/Palak paneer (Any one for one group)
+              </li>
+              <li>Rice bhakari or Chapati</li>
+              <li>Rice</li>
+              <li>Salad</li>
+              <li>Papad</li>
+              <li>Pickle</li>
+              <li>Sweet (2 gulab jamun)</li>
+            </ul>
+
+            <h3 className="text-md font-semibold mt-4">
+              Non veg (lunch & dinner) 🐔
+            </h3>
+            <p>Time: 8:30 pm to 10 pm</p>
+            <ul className="list-disc pl-5">
+              <li>Chicken (suka or rassa)</li>
+              <li>Rice bhakari or Chapati</li>
+              <li>Rice</li>
+              <li>Salad</li>
+              <li>Papad</li>
+              <li>Pickle</li>
+            </ul>
+
+            <h3 className="text-md font-semibold mt-4">
+              Breakfast (8.30 am to 10 am)
+            </h3>
+            <p>Any one for each person from below👇👇👇</p>
+            <ul className="list-disc pl-5">
+              <li>Poha or upma (upto 2 plates)</li>
+              <li>Misal paav (2 plates)</li>
+              <li>Burji paav (2 eggs)</li>
+              <li>Tea (1 cup)</li>
+            </ul>
+
+            <h3 className="text-md font-semibold mt-4">Evening</h3>
+            <p>Tea Biscuits + 2 Vada Pav</p>
+          </div>
+          <button onClick={toggleExpand} className="text-blue-500 mt-2">
+            {isExpanded ? "Read Less" : "Read More"}
+          </button>
         </label>
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
           <div className="flex flex-col gap-y-2">
