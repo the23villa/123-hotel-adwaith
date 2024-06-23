@@ -225,7 +225,7 @@ const Left = () => {
                 new Date(watch("duration.startDate")).getDay() === 6
               }
             />
-            <span>{foodLabelText}</span>
+           <span>{foodLabelText}</span>
           </div>
         </label>
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
@@ -385,70 +385,6 @@ function Checkout({ rent, setIsOpen, members }) {
     }
   }, [data, error, isLoading]);
 
-  function handleRazorpayPayment(paymentData) {
-    setIsRazorpayOpen(true);
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: paymentData.amount,
-      currency: paymentData.currency,
-      name: "The 23 Villa",
-      description: `Payment for ${rent?.title}`,
-      order_id: paymentData.orderId,
-      handler: function (response) {
-        setIsRazorpayOpen(false);
-        toast.success("Payment Successful");
-        setShowSuccess(true);
-        setOrderId(response.razorpay_order_id);
-        setIsOpen(true);
-        sendConfirmationEmail({
-          rent: rent?._id,
-          price: rent?.price * members,
-          members: members,
-          duration: booking?.duration,
-          email: user?.email,
-          orderId: response.razorpay_order_id,
-          amount: paymentData.amount,
-          currency: paymentData.currency,
-        });
-      },
-      modal: {
-        ondismiss: function () {
-          setIsRazorpayOpen(false);
-        },
-      },
-      prefill: {
-        name: user?.name,
-        email: user?.email,
-      },
-      theme: {
-        color: "#3399cc",
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-  }
-
-  async function sendConfirmationEmail(data) {
-    try {
-      const response = await fetch("/api/sendConfirmationEmail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        toast.success("Confirmation email sent successfully");
-      } else {
-        toast.error("Failed to send confirmation email");
-      }
-    } catch (error) {
-      toast.error("Error sending confirmation email");
-    }
-  }
   function handleRazorpayPayment(paymentData) {
     setIsRazorpayOpen(true);
     const options = {
