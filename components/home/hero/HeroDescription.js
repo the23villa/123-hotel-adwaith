@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on BannerDescription
-.
- */
-
-import Button from "@/components/shared/button/Button";
 import HighlightText from "@/components/shared/highlightText/HighlightText";
 import React from "react";
 

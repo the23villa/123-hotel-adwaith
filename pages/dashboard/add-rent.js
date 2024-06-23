@@ -95,8 +95,6 @@ const AddRent = () => {
   const handleAddRent = (data) => {
     const times = data.times.map((t) => t.times);
     const information = data.information.map((i) => i.information);
-    const amenities = data.amenities || [];
-
     const formData = new FormData();
 
     formData.append("title", data.title);
@@ -116,10 +114,6 @@ const AddRent = () => {
 
     for (let i = 0; i < times.length; i++) {
       formData.append("times", times[i]);
-    }
-
-    for (let i = 0; i < amenities.length; i++) {
-      formData.append("amenities", amenities[i]);
     }
 
     formData.append("duration", JSON.stringify(data.duration));
@@ -212,7 +206,7 @@ const AddRent = () => {
             placeholder="Type rent price here..."
             className="rounded"
             min={5}
-            max={500}
+            max={100000}
             {...register("price", { required: true })}
           />
         </label>
@@ -272,27 +266,6 @@ const AddRent = () => {
               </option>
             ))}
           </select>
-        </label>
-
-        <label htmlFor="amenities" className="flex flex-col gap-y-2">
-          Amenities*
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-            {["wifi", "dining", "parking", "pool", "gym"].map(
-              (amenity, index) => (
-                <div key={index} className="flex items-center gap-x-2">
-                  <input
-                    type="checkbox"
-                    id={amenity}
-                    value={amenity}
-                    {...register(`amenities.${index}`)}
-                  />
-                  <label htmlFor={amenity} className="text-sm">
-                    {amenity}
-                  </label>
-                </div>
-              )
-            )}
-          </div>
         </label>
 
         {/* location */}
