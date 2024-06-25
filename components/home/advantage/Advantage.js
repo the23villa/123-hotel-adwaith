@@ -1,15 +1,8 @@
-/**
- * Title: Write a program using JavaScript on Advantage
-.
- * Date: 30, August 2023
- */
-
 import Container from "@/components/shared/container/Container";
-import HighlightText from "@/components/shared/highlightText/HighlightText";
-import LoadImage from "@/components/shared/image/LoadImage";
 import React from "react";
 import AdvantageArticle from "./AdvantageArticle";
 import AdvantageBanner from "./AdvantageBanner";
+import Collection  from "./Collection";
 
 const Advantage = () => {
   return (

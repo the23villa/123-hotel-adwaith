@@ -8,6 +8,7 @@ import {
   useAddToCartMutation,
   useRemoveFromCartMutation,
 } from "@/services/cart/cartApi";
+import { BsSignTurnRight } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
@@ -16,17 +17,17 @@ import Modal from "../shared/modal/Modal";
 import { setBooking } from "@/features/booking/bookingSlice";
 import { useCreatePaymentIntentMutation } from "@/services/payment/paymentApi";
 import Image from "next/image";
-import { useKeenSlider } from "keen-slider/react";
-import "keen-slider/keen-slider.min.css";
 
 const Left = () => {
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state?.auth);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const tour = useSelector((state) => state?.rent);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentModalImage, setCurrentModalImage] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const { handleSubmit, control, watch, setValue } = useForm();
   const dispatch = useDispatch();
-
   const members = watch("members");
   const duration = watch("duration");
   const price = watch("price");
@@ -36,29 +37,22 @@ const Left = () => {
     "check the box to Include food"
   );
 
-  const [sliderRef, instanceRef] = useKeenSlider({
-    loop: true,
-    breakpoints: {
-      "(max-width: 768px)": {
-        slides: { perView: 1, spacing: 10 },
-      },
-      "(min-width: 768px)": {
-        slides: { perView: 1, spacing: 10 },
-      },
-      "(min-width: 1080px)": {
-        slides: { perView: 1, spacing: 10 },
-      },
-    },
-  });
+  const openModal = () => {
+    setIsModalOpen(true);
+    setCurrentModalImage(0);
+  };
 
-  const isMounted = useRef(false);
+  const changeModalImage = (index) => {
+    setCurrentModalImage(index);
+  };
+  // const isMounted = useRef(false);
 
-  useEffect(() => {
-    if (!isMounted.current && instanceRef.current) {
-      instanceRef.current.update();
-      isMounted.current = true;
-    }
-  }, [instanceRef]);
+  // useEffect(() => {
+  //   if (!isMounted.current && instanceRef.current) {
+  //     instanceRef.current.update();
+  //     isMounted.current = true;
+  //   }
+  // }, []);
 
   useEffect(() => {
     let basePrice = tour?.price * members;
@@ -71,6 +65,14 @@ const Left = () => {
     addToCart,
     { isLoading: addToCartLoading, data: addToCartData, error: addToCartError },
   ] = useAddToCartMutation();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % tour?.gallery?.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [tour?.gallery]);
 
   const [
     removeFromCart,
@@ -118,24 +120,6 @@ const Left = () => {
     removeFromCartError,
   ]);
 
-  function getColumnSpanClass(index, totalThumbnails) {
-    if (totalThumbnails === 1 || totalThumbnails === 2) {
-      return "col-span-12";
-    } else if (totalThumbnails === 3) {
-      return index === 0 ? "col-span-12" : "col-span-6";
-    } else if (totalThumbnails === 4) {
-      return index === 0 || index === 1 ? "col-span-12" : "col-span-6";
-    } else if (totalThumbnails === 5) {
-      return index === 0 || index === 1
-        ? "col-span-12"
-        : index === 2 || index === 3
-        ? "col-span-6"
-        : "col-span-12";
-    } else {
-      return "";
-    }
-  }
-
   function formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -181,44 +165,92 @@ const Left = () => {
     setIsExpanded(!isExpanded);
   };
 
+  const hasGallery = tour?.gallery && tour.gallery.length > 0;
+
+  if (!hasGallery) {
+    return <div>No images available</div>;
+  }
+
   return (
     <>
       <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
-        <div ref={sliderRef} className="keen-slider relative">
+        <div className="mt-5 relative w-full h-60 overflow-hidden">
           {tour?.gallery?.map((thumbnail, index) => (
             <LoadImage
               key={index}
               src={thumbnail?.url}
               alt={thumbnail?.public_id}
-              className="rounded mx-auto max-w-full h-96 keen-slider__slide"
+              className={`absolute top-0 left-0 w-full object-cover transition-opacity duration-500 ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
               width={680}
-              height={200}
+              height={384}
             />
           ))}
           <div className="absolute bottom-4 inset-x-0 flex justify-center items-center">
-            {Array.from({ length: tour?.gallery?.length || 0 }).map(
-              (_, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    backgroundColor:
-                      sliderRef.current?.track.details().absoluteSlide === index
-                        ? "grey"
-                        : "white",
-                    marginRight:
-                      index !== tour?.gallery?.length - 1 ? "8px" : "0",
-                  }}
-                ></div>
-              )
-            )}
+            {tour?.gallery?.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full mx-1 ${
+                  index === currentSlide ? "bg-white" : "bg-gray-400"
+                }`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
           </div>
+
+          {/* Overlay button to show all photos */}
+          <button
+            className="absolute bottom-10 right-4 bg-white bg-opacity-80 text-black px-2 py-2 rounded-lg shadow-md hover:bg-opacity-100 transition-all duration-200"
+            onClick={openModal}
+          >
+            See all {tour?.gallery?.length} photos
+          </button>
         </div>
+
+        {/* Modal for all photos */}
+        {isModalOpen && (
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <div className="flex flex-col h-full">
+              {/* Main image */}
+              <div className="flex-grow overflow-hidden">
+                <LoadImage
+                  src={tour?.gallery[currentModalImage]?.url}
+                  alt={tour?.gallery[currentModalImage]?.public_id}
+                  className="w-full h-full object-contain"
+                  width={1024}
+                  height={768}
+                />
+              </div>
+
+              {/* Thumbnails */}
+              <div className="flex overflow-x-auto p-2 bg-gray-100">
+                {tour?.gallery?.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`flex-shrink-0 w-20 h-20 mr-2 cursor-pointer ${
+                      index === currentModalImage
+                        ? "border-2 border-blue-500"
+                        : ""
+                    }`}
+                    onClick={() => changeModalImage(index)}
+                  >
+                    <LoadImage
+                      src={image?.url}
+                      alt={image?.public_id}
+                      className="w-full h-full object-cover"
+                      width={80}
+                      height={80}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Modal>
+        )}
         <Right />
         <label className="flex flex-col items-start gap-2">
-          <h2 className="text-lg">Food</h2>
+          <h2 className="text-lg mb-2">Meal</h2>
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -281,6 +313,22 @@ const Left = () => {
             {isExpanded ? "Read Less" : "Read More"}
           </button>
         </label>
+        <div className="flex flex-col gap-y-1.5">
+          <h2 className="md:text-xl text-lg">Open Time</h2>
+          <div className="flex flex-col gap-y-1">
+            {tour?.times?.map((time, index) => (
+              <p
+                key={index}
+                className="flex flex-row gap-x-2 items-center text-sm"
+              >
+                <span className="p-0.5">
+                  <BsSignTurnRight className="h-3.5 w-3.5" />
+                </span>
+                {time}
+              </p>
+            ))}
+          </div>
+        </div>
         <div className="border border-secondary flex flex-col gap-y-8 lg:p-8 md:p-6 p-4 rounded w-full">
           <div className="flex flex-col gap-y-2">
             <h2 className="text-lg">Booking Now</h2>
@@ -340,7 +388,7 @@ const Left = () => {
                   </label>
                 )}
               />
-              <div className="fixed bottom-0 left-0 right-0 bg-white z-10 p-4 shadow-md border-t border-gray-200">
+              <div className="fixed bottom-0 left-0 right-0 bg-white z-50 p-4 shadow-md border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold flex flex-col">
                     <div className="flex items-center">

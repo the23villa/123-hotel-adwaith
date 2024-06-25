@@ -11,6 +11,7 @@ import Blogs from "@/components/home/blogs/Blogs";
 import Reviews from "@/components/shared/review/Reviews";
 import Gallery from "@/components/home/gallery/Gallery";
 import NewsLetter from "@/components/home/news-letter/NewsLetter";
+import Collection from "@/components/home/advantage/Collection";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <BestSelling />
         <Offer />
         <Advantage />
+        <Collection/>
         <Reviews />
         {/* <Gallery /> */}
         <NewsLetter />

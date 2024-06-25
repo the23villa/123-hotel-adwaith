@@ -1,47 +1,73 @@
-/**
- * Title: Write a program using JavaScript on Logo
-.
- * Date: 15, August 2023
- */
-
-// import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
+import { FaArrowLeft, FaPhone } from "react-icons/fa";
 import LoadImage from "../image/LoadImage";
+
+const BackIcon = () => {
+  const router = useRouter();
+  return (
+    <div
+      onClick={() => router.back()}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        cursor: "pointer",
+      }}
+      className="cursor-pointer"
+    >
+      <FaArrowLeft size={15} />
+      <span style={{ marginLeft: "10px" }}></span>
+    </div>
+  );
+};
 
 const Logo = () => {
   const router = useRouter();
+  const isHomePage = router.pathname === "/";
 
-  // function toBase64(str) {
-  //   return btoa(unescape(encodeURIComponent(str)));
-  // }
+  // Define your phone number
+  const phoneNumber = "+1234567890";
 
-  // function shimmer(width, height) {
-  //   return `https://placehold.co/${width}x${height}.svg`;
-  // }
+  const callUsHandler = () => {
+    window.location.href = `tel:${phoneNumber}`;
+  };
 
   return (
-    <>
-      <LoadImage
-        src="/assets/logo2.png"
-        alt="logo"
-        // placeholder="blur"
-        // blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(60, 50))}`}
-        /**
-         * 1st Parameter: Width
-         * 2nd Parameter: Height
-         */
-        title="logo"
-        width={150}
-        height={150}
-        style={{
-          maxWidth: "100%",
-          height: "auto",
-        }}
-        onClick={() => router.push("/")}
-        className="cursor-pointer object-center max-w-full mr-5"
-      />
-    </>
+    <div className="flex items-center justify-between w-full">
+      {isHomePage ? (
+        <>
+          <div className="flex items-center">
+            <LoadImage
+              src="/assets/logo2.png"
+              alt="logo"
+              title="logo"
+              width={80}
+              height={80}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+              }}
+              className="cursor-pointer object-center max-w-full"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold text-gray-500">
+                The 23 Villa
+              </span>
+            </div>
+          </div>
+          {/* Call Us button */}
+          <button
+            className="flex items-center bg-transparent mr-4 border-none text-gray-700"
+            onClick={callUsHandler}
+          >
+            <FaPhone className="mr-1" />
+            Call Us
+          </button>
+        </>
+      ) : (
+        <BackIcon />
+      )}
+    </div>
   );
 };
 
