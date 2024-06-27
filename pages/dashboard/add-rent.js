@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Add-rent
-.
- * Date: 26, January 2024
- */
-
 import LoadImage from "@/components/shared/image/LoadImage";
 import hotelTypes from "@/data/hotelTypes";
 import useGetCountries from "@/hooks/useGetCountries";
@@ -21,7 +15,7 @@ import { toast } from "react-hot-toast";
 const AddRent = () => {
   const [galleryPreview, setGalleryPreview] = useState([]);
   const [addRent, { isLoading, data, error }] = useAddRentMutation();
-  const [country, setCountry] = useState("Karjat");
+  const [country, setCountry] = useState("Bangladesh");
   const { register, handleSubmit, control, reset } = useForm();
   const {
     fields: informationFields,
@@ -58,7 +52,7 @@ const AddRent = () => {
     if (data) {
       toast.success(data?.message, { id: "add-rent" });
       setGalleryPreview([]);
-      setCountry("Karjat");
+      setCountry("Bangladesh");
       reset();
     }
 
@@ -72,7 +66,7 @@ const AddRent = () => {
     const previewImages = [];
 
     if (files.length > 15) {
-      alert("You can only upload a maximum of 15 images.");
+      alert("You can only upload a maximum of 5 images.");
       window.location.reload();
       return;
     }
@@ -95,6 +89,7 @@ const AddRent = () => {
   const handleAddRent = (data) => {
     const times = data.times.map((t) => t.times);
     const information = data.information.map((i) => i.information);
+
     const formData = new FormData();
 
     formData.append("title", data.title);
@@ -149,7 +144,7 @@ const AddRent = () => {
               className="py-1 px-4 flex flex-row gap-x-2 bg-green-100 border border-green-900 text-green-900 rounded-secondary w-fit"
             >
               <IoCloudUploadOutline className="h-5 w-5" />
-              Choose upto 5 photos*
+              Choose upto 15 photos*
             </button>
             <input
               type="file"
@@ -312,7 +307,7 @@ const AddRent = () => {
                   {...register(`information.${index}.information`, {
                     required: true,
                   })}
-                  maxlength="500"
+                  maxlength="100"
                 />
                 <button
                   type="button"

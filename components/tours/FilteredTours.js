@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on FilteredTours
-.
- * Date: 02, November 2023
- */
-
 import React, { useEffect, useMemo } from "react";
 import Card from "../shared/card/Card";
 import SkeletonCard from "../shared/card/SkeletonCard";

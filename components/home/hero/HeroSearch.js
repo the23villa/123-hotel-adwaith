@@ -1,27 +1,43 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { setCountries } from "@/features/filter/filterSlice";
+import { FaMountain, FaCity, FaTree, FaHorse } from "react-icons/fa";
+
+const CountryButton = ({ country, icon, onClick }) => (
+  <button
+    onClick={() => onClick(country)}
+    className="flex flex-col items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg w-full transition duration-300"
+  >
+    {icon}
+    <span className="mt-1 text-sm">{country}</span>
+  </button>
+);
 
 const HeroDescription = () => {
   const [showSearch, setShowSearch] = useState(false);
-  const [destination, setDestination] = useState("");
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [persons, setPersons] = useState(2);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  const handleSearchClick = () => {
-    setShowSearch(true);
-  };
+  const handleSearchClick = () => setShowSearch(true);
+  const handleModalClose = () => setShowSearch(false);
 
-  const handleModalClose = () => {
+  const handleCountrySelect = (country) => {
     setShowSearch(false);
+    dispatch(setCountries([country]));
+    router.push("/tours");
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    // Logic to handle search can be added here
-    console.log({ destination, checkIn, checkOut, persons });
-    window.open("/tours", "_self");
-  };
+  const countries = [
+    {
+      name: "Lonavala",
+      icon: <FaMountain className="text-gray-600 text-2xl" />,
+    },
+    { name: "Karjat", icon: <FaCity className="text-gray-600 text-2xl" /> },
+    { name: "Alibaug", icon: <FaTree className="text-gray-600 text-2xl" /> },
+    { name: "Palghar", icon: <FaHorse className="text-gray-600 text-2xl" /> },
+  ];
 
   return (
     <section className="lg:col-span-12 md:col-span-6 px-4 md:px-8 pb-20 md:pb-12 lg:pb-1 pt-14">
@@ -79,62 +95,24 @@ const HeroDescription = () => {
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
         ariaHideApp={false}
       >
-        <div className="bg-white rounded-lg p-4 w-11/12 md:w-1/2">
-          <h2 className="text-lg font-semibold mb-4">Search</h2>
-          <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="text-black font-semibold">Destination</label>
-              <input
-                type="text"
-                placeholder="Enter destination"
-                className="bg-gray-200 rounded-md px-2 py-1 w-full"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
+        <div className="bg-white rounded-lg p-6 w-11/12 max-w-xl">
+          <h2 className="text-xl font-semibold mb-4">Select a Location</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {countries.map((country) => (
+              <CountryButton
+                key={country.name}
+                country={country.name}
+                icon={country.icon}
+                onClick={handleCountrySelect}
               />
-            </div>
-            <div>
-              <label className="text-black font-semibold">Check In</label>
-              <input
-                type="date"
-                className="bg-gray-200 rounded-md px-2 py-1 w-full"
-                value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-black font-semibold">Check Out</label>
-              <input
-                type="date"
-                className="bg-gray-200 rounded-md px-2 py-1 w-full"
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-black font-semibold">Persons</label>
-              <input
-                type="number"
-                className="bg-gray-200 rounded-md px-2 py-1 w-full"
-                value={persons}
-                onChange={(e) => setPersons(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleModalClose}
-                className="bg-gray-500 text-white rounded-md px-4 py-2 mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="bg-black text-white rounded-md px-4 py-2"
-              >
-                Search
-              </button>
-            </div>
-          </form>
+            ))}
+          </div>
+          <button
+            onClick={handleModalClose}
+            className="mt-6 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg w-full transition duration-300"
+          >
+            Cancel
+          </button>
         </div>
       </Modal>
     </section>

@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on Index
-.
- * Date: 01, November 2023
- */
-
 import Banner from "@/components/tours/Banner";
 import Destinations from "@/components/tours/Destinations";
 import Main from "@/layouts/Main";
@@ -17,7 +11,7 @@ const Tours = () => {
         <title>123 Hotel Booking</title>
       </Head>
       <Main>
-        <Banner />
+        {/* <Banner /> */}
         <Destinations />
       </Main>
     </main>

@@ -50,7 +50,7 @@ const Banner = () => {
         </p>
       </article>
 
-      {/* <Search /> */}
+      <Search />
     </section>
   );
 };
