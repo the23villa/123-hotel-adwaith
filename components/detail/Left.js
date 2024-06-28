@@ -452,7 +452,7 @@ const Left = () => {
                         className="rounded-secondary h-10 w-full flex-1"
                         defaultValue={field.value || tour?.members}
                         value={field.value}
-                        min="1"
+                        min="2"
                         onChange={(e) =>
                           field.onChange(parseInt(e.target.value))
                         }
