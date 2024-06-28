@@ -327,7 +327,7 @@ const Left = () => {
             </ul>
 
             <h3 className="text-md font-semibold mt-4">Evening</h3>
-            <p>Tea Biscuits + 2 Vada Pav</p>
+            <p>Tea Biscuits + 3 Vada Pav</p>
           </div>
           <button onClick={toggleExpand} className="text-blue-500 mt-2">
             {isExpanded ? "Read Less" : "Read More"}
