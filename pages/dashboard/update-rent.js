@@ -67,6 +67,7 @@ const UpdateRent = () => {
       price: rent?.price || "",
       gallery: rent?.gallery || [],
       members: rent?.members || 1,
+      priceIncrease: rent?.priceIncrease || 0,
       duration: {
         startDate: formatDate(rent?.duration?.startDate) || "",
         endDate: formatDate(rent?.duration?.endDate) || "",
@@ -153,6 +154,7 @@ const UpdateRent = () => {
     formData.append("members", data?.members);
     formData.append("location", data?.location);
     formData.append("type", data?.type);
+    formData.append("priceIncrease", data.priceIncrease);
 
     for (let i = 0; i < information.length; i++) {
       formData.append("information", information[i]);
@@ -282,6 +284,19 @@ const UpdateRent = () => {
               placeholder="Type rent members here..."
               className="rounded"
               {...register("members")}
+            />
+          </label>
+
+          {/* price increase per additional member */}
+          <label htmlFor="priceIncrease" className="flex flex-col gap-y-2">
+            Price Increase per Additional Member*
+            <input
+              type="number"
+              name="priceIncrease"
+              id="priceIncrease"
+              placeholder="Enter price increase per additional member..."
+              className="rounded"
+              {...register("priceIncrease")}
             />
           </label>
 

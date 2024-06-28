@@ -98,6 +98,8 @@ const AddRent = () => {
     formData.append("members", data.members);
     formData.append("location", data.location);
     formData.append("type", data.type);
+    formData.append("priceIncrease", data.priceIncrease);
+    
 
     for (let i = 0; i < data.gallery.length; i++) {
       formData.append("gallery", data.gallery[i]);
@@ -216,6 +218,20 @@ const AddRent = () => {
             placeholder="Type rent members here..."
             className="rounded"
             {...register("members", { required: true })}
+          />
+        </label>
+
+        {/* price increase per additional member */}
+        <label htmlFor="priceIncrease" className="flex flex-col gap-y-2">
+          Price Increase per Additional Member*
+          <input
+            type="number"
+            name="priceIncrease"
+            id="priceIncrease"
+            placeholder="Enter price increase per additional member..."
+            className="rounded"
+            min={0}
+            {...register("priceIncrease", { required: true })}
           />
         </label>
 

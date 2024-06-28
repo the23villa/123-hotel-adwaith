@@ -39,24 +39,23 @@ const rentSchema = new Schema(
       required: [true, "Please provide rent price"],
     },
 
+    
     members: {
       type: Number,
       required: [true, "Please provide how many members"],
       default: 0,
     },
-
+    
+    priceIncrease: {
+      type: Number,
+      required: [true, "Please provide price increase per additional member"],
+      default: 0,
+    },
+    
     duration: {
       startDate: Date,
       endDate: Date,
     },
-
-    amenities: [
-      {
-        type: String,
-        enum: ["wifi", "dining", "parking", "pool", "gym"],
-        required: true,
-      },
-    ],
 
     location: {
       type: String,

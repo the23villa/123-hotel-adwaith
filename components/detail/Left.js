@@ -55,12 +55,32 @@ const Left = () => {
   // }, []);
 
   useEffect(() => {
-    let basePrice = tour?.price * members;
-    if (includeFood) {
-      basePrice += foodBasePrice;
+    const maxMembers = tour?.members || 1;
+    const basePrice = tour?.price || 0;
+    const priceIncrease = tour?.priceIncrease || 1000;
+
+    let totalPrice = basePrice;
+
+    if (members > maxMembers) {
+      const extraMembers = members - maxMembers;
+      totalPrice += extraMembers * priceIncrease;
     }
-    setValue("price", Math.ceil(basePrice));
-  }, [members, includeFood, setValue, tour?.price, foodBasePrice]);
+
+    if (includeFood) {
+      totalPrice += foodBasePrice;
+    }
+
+    setValue("price", Math.ceil(totalPrice));
+  }, [
+    members,
+    includeFood,
+    setValue,
+    tour?.price,
+    tour?.members,
+    tour?.priceIncrease,
+    foodBasePrice,
+  ]);
+
   const [
     addToCart,
     { isLoading: addToCartLoading, data: addToCartData, error: addToCartError },
@@ -431,7 +451,7 @@ const Left = () => {
                       className="rounded-secondary h-10 w-full flex-1"
                       defaultValue={field.value || tour?.members}
                       value={field.value}
-                      min="1"
+                      min="5"
                       max={tour?.members}
                       onChange={(e) => field.onChange(parseInt(e.target.value))}
                     />
