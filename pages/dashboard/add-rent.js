@@ -99,7 +99,6 @@ const AddRent = () => {
     formData.append("location", data.location);
     formData.append("type", data.type);
     formData.append("priceIncrease", data.priceIncrease);
-    
 
     for (let i = 0; i < data.gallery.length; i++) {
       formData.append("gallery", data.gallery[i]);
@@ -210,12 +209,12 @@ const AddRent = () => {
 
         {/* members */}
         <label htmlFor="members" className="flex flex-col gap-y-2">
-          Number of Members*
+          Base Number of Members*
           <input
             type="number"
             name="members"
             id="members"
-            placeholder="Type rent members here..."
+            placeholder="Type base number of members here..."
             className="rounded"
             {...register("members", { required: true })}
           />

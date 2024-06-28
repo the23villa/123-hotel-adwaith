@@ -55,19 +55,19 @@ const Left = () => {
   // }, []);
 
   useEffect(() => {
-    const maxMembers = tour?.members || 1;
+    const baseMembers = tour?.members || 1;
     const basePrice = tour?.price || 0;
     const priceIncrease = tour?.priceIncrease || 1000;
 
     let totalPrice = basePrice;
 
-    if (members > maxMembers) {
-      const extraMembers = members - maxMembers;
+    if (members > baseMembers) {
+      const extraMembers = members - baseMembers;
       totalPrice += extraMembers * priceIncrease;
     }
 
     if (includeFood) {
-      totalPrice += foodBasePrice;
+      totalPrice += foodBasePrice * members;
     }
 
     setValue("price", Math.ceil(totalPrice));
@@ -151,7 +151,7 @@ const Left = () => {
   function handleIntegratePurchase(data) {
     console.log(data);
     setIsOpen(true);
-    dispatch(setBooking(data));
+    dispatch(setBooking({ ...data, updatedPrice: price }));
   }
 
   function handleFoodCheckboxChange(event) {
@@ -437,24 +437,34 @@ const Left = () => {
                 render={({ field }) => (
                   <label
                     htmlFor="members"
-                    className="flex flex-row gap-x-2 items-center w-full"
+                    className="flex flex-col gap-y-2 w-full"
                   >
-                    <span className="h-7 w-7 rounded-secondary border-2 border-black flex justify-center items-center p-1.5">
-                      <FiUsers className="w-6 h-6" />
-                    </span>
-                    <input
-                      {...field}
-                      type="number"
-                      name="members"
-                      id="members"
-                      placeholder="Members"
-                      className="rounded-secondary h-10 w-full flex-1"
-                      defaultValue={field.value || tour?.members}
-                      value={field.value}
-                      min="5"
-                      max={tour?.members}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    />
+                    <div className="flex flex-row gap-x-2 items-center">
+                      <span className="h-7 w-7 rounded-secondary border-2 border-black flex justify-center items-center p-1.5">
+                        <FiUsers className="w-6 h-6" />
+                      </span>
+                      <input
+                        {...field}
+                        type="number"
+                        name="members"
+                        id="members"
+                        placeholder="Members"
+                        className="rounded-secondary h-10 w-full flex-1"
+                        defaultValue={field.value || tour?.members}
+                        value={field.value}
+                        min="5"
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
+                      />
+                    </div>
+                    {field.value > tour?.members && (
+                      <p className="text-xs text-orange-600 mt-1">
+                        Base limit is {tour?.members} members. Additional
+                        members will incur an extra charge of ₹
+                        {tour?.priceIncrease} per person.
+                      </p>
+                    )}
                   </label>
                 )}
               />
@@ -469,14 +479,19 @@ const Left = () => {
           onClose={() => setIsOpen(false)}
           className="lg:w-1/4 md:w-1/3 w-full z-50"
         >
-          <Checkout rent={tour} setIsOpen={setIsOpen} members={members} />
+          <Checkout
+            rent={tour}
+            setIsOpen={setIsOpen}
+            members={members}
+            updatedPrice={price}
+          />
         </Modal>
       )}
     </>
   );
 };
 
-function Checkout({ rent, setIsOpen, members }) {
+function Checkout({ rent, setIsOpen, members, updatedPrice }) {
   const booking = useSelector((state) => state?.booking);
   const user = useSelector((state) => state?.auth);
   const [createPaymentIntent, { isLoading, data, error }] =
@@ -485,6 +500,7 @@ function Checkout({ rent, setIsOpen, members }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
+  const totalPrice = updatedPrice || members * rent?.price;
   const { control } = useForm({
     defaultValues: {
       email: user?.email,
@@ -574,7 +590,7 @@ function Checkout({ rent, setIsOpen, members }) {
   function handlePaymentClick() {
     createPaymentIntent({
       rent: rent?._id,
-      price: rent?.price * members,
+      price: totalPrice,
       members: members,
       duration: booking?.duration,
       email: user?.email,
@@ -599,7 +615,7 @@ function Checkout({ rent, setIsOpen, members }) {
             {booking?.duration?.endDate}
           </p>
           <p>Members: {members}</p>
-          <p>Total Amount: ₹{members * rent?.price}</p>
+          <p>Total Amount: ₹{totalPrice}</p>
         </div>
         <code
           className="text-xs bg-slate-100 p-2 rounded text-center"
@@ -656,17 +672,23 @@ function Checkout({ rent, setIsOpen, members }) {
 
       <div className="text-sm flex flex-col gap-y-2">
         <p className="flex justify-between items-center">
-          <span>Cost Per Night</span>
+          <span>Base Price</span>
           <span>₹{rent?.price}</span>
         </p>
         <p className="flex justify-between items-center">
           <span>Number of Members</span>
           <span>{members}</span>
         </p>
+        {updatedPrice > members * rent?.price && (
+          <p className="flex justify-between items-center">
+            <span>Additional Charges</span>
+            <span>₹{updatedPrice - members * rent?.price}</span>
+          </p>
+        )}
         <hr />
         <p className="flex justify-between items-center font-semibold">
           <span>Total Cost</span>
-          <span>₹{members * rent?.price}</span>
+          <span>₹{totalPrice}</span>
         </p>
       </div>
 
