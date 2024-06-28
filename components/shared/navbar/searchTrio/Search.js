@@ -1,11 +1,10 @@
-
-
 import React, { useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import Tooltip from "../../tooltip/Tooltip";
 import Modal from "../../modal/Modal";
 import SearchFilter from "./SearchFilter";
 import HighlightText from "../../highlightText/HighlightText";
+import Image from "next/image";
 
 const Search = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +24,12 @@ const Search = () => {
           className="p-1.5 border border-primary/20 hover:border-primary rounded"
           onClick={openModal}
         >
-          <BiSearch className="text-lg" />
+          <Image
+            src="/assets/home-page/icons/search.png"
+            alt="Search"
+            width={30}
+            height={30}
+          />
         </button>
       </Tooltip>
 

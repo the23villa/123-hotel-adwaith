@@ -50,14 +50,12 @@ const Logo = () => {
               className="cursor-pointer object-center max-w-full"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-gray-500">
-                The 23 Villa
-              </span>
+              <span className="text-xl font-bold text-white">The 23 Villa</span>
             </div>
           </div>
           {/* Call Us button */}
           <button
-            className="flex items-center bg-transparent mr-4 border-none text-gray-700"
+            className="flex items-center bg-transparent mr-4 border-none text-white"
             onClick={callUsHandler}
           >
             <FaPhone className="mr-1" />

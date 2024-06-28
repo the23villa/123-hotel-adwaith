@@ -10,6 +10,7 @@ import MenuItems from "./MenuItems";
 import LoadImage from "../../image/LoadImage";
 import { useSelector } from "react-redux";
 import { HiOutlineUser } from "react-icons/hi";
+import Image from "next/image";
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,10 +19,15 @@ const MobileMenu = () => {
   return (
     <div className="relative">
       <button
-        className="p-1.5 shadow rounded border-primary/20 border"
+        className="p-1.5 shadow rounded border-primary/15 border"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <HiOutlineUser className="text-lg" />
+        <Image
+          src="/assets/home-page/icons/login.png"
+          alt="Search"
+          width={30}
+          height={30}
+        />
       </button>
       <MenuItems isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>

@@ -23,7 +23,7 @@ const Hero = () => {
     <section
       className="pt-40 sm:pt-40 h-screen bg-no-repeat bg-cover bg-bottom"
       style={{
-        backgroundImage: "url(/assets/home-page/banner/home3.jpg)",
+        backgroundImage: "url(/assets/home-page/banner/wall3.jpg)",
       }}
     >
       <Container className="h-full">

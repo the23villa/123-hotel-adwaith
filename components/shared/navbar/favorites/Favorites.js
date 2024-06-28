@@ -72,7 +72,13 @@ const Favorites = () => {
           className="p-1.5 border border-primary/20 hover:border-primary rounded relative"
           onClick={openModal}
         >
-          <MdFavoriteBorder className="text-lg" />
+          <Image
+            src="/assets/home-page/icons/shop.png"
+            alt="Search"
+            width={30}
+            height={30}
+            className="text-lg"
+          />
 
           <span
             className={`h-2 w-2 rounded-secondary absolute -top-1 -right-1 ${
