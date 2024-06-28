@@ -23,6 +23,7 @@ import {
   MdOutlineLocalCafe,
 } from "react-icons/md";
 import { HiOutlineSparkles } from "react-icons/hi";
+import FloatingHelp from "@/components/detail/FloatingHelp";
 
 const Right = () => {
   const tour = useSelector((state) => state?.rent);
@@ -129,7 +130,7 @@ const Right = () => {
 
   const cancellationPolicyContent = (
     <div>
-      <h2 className="md:text-xl text-lg mb-4">Cancellation Policy</h2>
+      <h2 className="md:text-xl text-lg mb-4">Booking procedure</h2>
       <p>
         You can send payment 50% advance on Gpay: 9594232321 (The 23 Villa
         Karjat)
@@ -267,6 +268,7 @@ const Right = () => {
           </button>
         </Modal>
       </div>
+      <FloatingHelp ownerWhatsApp={tour?.ownerWhatsApp} />
     </div>
   );
 };
