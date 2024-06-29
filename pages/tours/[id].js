@@ -1,9 +1,3 @@
-/**
- * Title: Write a program using JavaScript on [tour]
-.
- * Date: 19, October 2023
- */
-
 import Left from "@/components/detail/Left";
 import Right from "@/components/detail/Right";
 import Reviews from "@/components/shared/review/Reviews";
@@ -74,7 +68,7 @@ const DetailPage = () => {
                 <AllReviews className="!px-0" />
                 {/* <MoreRents className="!px-0" /> */}
                 <Location location={tour?.location} />
-                <FAQ/>
+                <FAQ />
               </div>
             </>
           )}

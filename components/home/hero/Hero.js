@@ -6,6 +6,12 @@ import HeroSearch from "./HeroSearch";
 
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const images = [
+    "/assets/home-page/banner/wall3.jpg",
+    "/assets/home-page/banner/wall1.jpg",
+  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -13,17 +19,24 @@ const Hero = () => {
     };
 
     window.addEventListener("resize", handleResize);
-
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImage((prevImage) => (prevImage + 1) % images.length);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <section
-      className="pt-40 sm:pt-40 h-screen bg-no-repeat bg-cover bg-bottom"
+      className="pt-40 sm:pt-40 h-screen bg-no-repeat bg-cover bg-bottom transition-all duration-1000"
       style={{
-        backgroundImage: "url(/assets/home-page/banner/wall3.jpg)",
+        backgroundImage: `url(${images[currentImage]})`,
       }}
     >
       <Container className="h-full">
