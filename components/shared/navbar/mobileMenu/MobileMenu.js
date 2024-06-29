@@ -23,7 +23,7 @@ const MobileMenu = () => {
         onClick={() => setIsOpen(!isOpen)}
       >
         <Image
-          src="/assets/home-page/icons/login.png"
+          src="/assets/home-page/icons/login.gif"
           alt="Search"
           width={30}
           height={30}

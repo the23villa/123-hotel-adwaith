@@ -73,7 +73,7 @@ const Favorites = () => {
           onClick={openModal}
         >
           <Image
-            src="/assets/home-page/icons/shop.png"
+            src="/assets/home-page/icons/favorite.gif"
             alt="Search"
             width={30}
             height={30}

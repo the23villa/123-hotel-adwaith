@@ -25,7 +25,7 @@ const Search = () => {
           onClick={openModal}
         >
           <Image
-            src="/assets/home-page/icons/search.png"
+            src="/assets/home-page/icons/location.gif"
             alt="Search"
             width={30}
             height={30}

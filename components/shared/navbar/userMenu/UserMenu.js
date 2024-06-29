@@ -17,15 +17,15 @@ const UserMenu = () => {
       <div className="flex sm:hidden flex-row items-center gap-x-20">
         <div className="flex flex-col items-center text-gray-600">
           <Search />
-          <span className="mt-1 text-sm text-gray-500 font-serif">Search</span>
+          <span className="text-sm text-gray-500 font-serif">Search</span>
         </div>
         <div className="flex flex-col items-center text-gray-600">
           <Favorites />
-          <span className="mt-1 text-sm text-gray-500 font-serif">Wish</span>
+          <span className="text-sm text-gray-500 font-serif">Wish</span>
         </div>
         <div className="flex flex-col items-center text-gray-600">
           <MobileMenu />
-          <span className="mt-1 text-sm text-gray-500 font-serif">Menu</span>
+          <span className="text-sm text-gray-500 font-serif">Menu</span>
         </div>
       </div>
     </div>
