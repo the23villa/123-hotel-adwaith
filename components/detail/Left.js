@@ -408,7 +408,8 @@ const Left = () => {
             onSubmit={handleSubmit(handleIntegratePurchase)}
           >
             {/* startDate & endDate */}
-            <div className="flex lg:flex-row flex-col justify-between gap-2">
+            <div className="flex lg:flex-row flex-col justify-between gap-5">
+              <h2 className="font-serif">Start Date</h2>
               <Controller
                 control={control}
                 name="duration.startDate"
@@ -418,7 +419,6 @@ const Left = () => {
                 }}
                 render={({ field }) => (
                   <div>
-                    <label>Start Date</label>
                     <DatePicker
                       selected={startDate}
                       onChange={(date) => {
@@ -436,7 +436,7 @@ const Left = () => {
                   </div>
                 )}
               />
-
+              <h2 className="font-serif">End Date</h2>
               <Controller
                 control={control}
                 name="duration.endDate"
@@ -446,7 +446,6 @@ const Left = () => {
                 }}
                 render={({ field }) => (
                   <div>
-                    <label>End Date</label>
                     <DatePicker
                       selected={endDate}
                       onChange={(date) => {
@@ -464,7 +463,6 @@ const Left = () => {
                   </div>
                 )}
               />
-
               <div className="fixed bottom-0 left-0 right-0 bg-white z-50 p-4 shadow-md border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold flex flex-col">
@@ -655,7 +653,7 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
   }
 
   function formatDisplayDate(dateString) {
-    if (!dateString) return '';
+    if (!dateString) return "";
     return new Date(dateString).toLocaleDateString();
   }
 

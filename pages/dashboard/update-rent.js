@@ -72,9 +72,8 @@ const UpdateRent = () => {
         startDate: formatDate(rent?.duration?.startDate) || "",
         endDate: formatDate(rent?.duration?.endDate) || "",
       },
-      blockedDates: rent?.blockedDates?.[0]
-        ? formatDate(rent.blockedDates[0])
-        : "",
+      blockedDates:
+        rent?.blockedDates?.map((date) => ({ date: formatDate(date) })) || [],
       location: rent?.location || "",
       type: rent?.type || "",
       information: rent?.information?.map((item) => ({
@@ -135,6 +134,15 @@ const UpdateRent = () => {
     name: "times",
   });
 
+  const {
+    fields: blockedDatesFields,
+    append: blockedDatesAppend,
+    remove: blockedDatesRemove,
+  } = useFieldArray({
+    control,
+    name: "blockedDates",
+  });
+
   const countries = useGetCountries();
   const GeoLocation = useMemo(
     () =>
@@ -173,9 +181,9 @@ const UpdateRent = () => {
       }
     }
 
-    if (data.blockedDates) {
-      formData.append("blockedDates", data.blockedDates);
-    }
+    data.blockedDates.forEach((dateObj) => {
+      formData.append("blockedDates", dateObj.date);
+    });
 
     formData.append("duration", JSON.stringify(data.duration));
 
@@ -334,14 +342,33 @@ const UpdateRent = () => {
             </label>
 
             <label htmlFor="blockedDates" className="flex flex-col gap-y-2">
-              Blocked Date
-              <input
-                type="date"
-                name="blockedDates"
-                id="blockedDates"
-                className="rounded"
-                {...register("blockedDates")}
-              />
+              Blocked Dates
+              {blockedDatesFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="flex flex-row gap-x-2 items-center"
+                >
+                  <input
+                    type="date"
+                    {...register(`blockedDates.${index}.date`)}
+                    className="rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => blockedDatesRemove(index)}
+                    className="bg-red-100 border border-red-900 text-red-900 p-0.5 rounded-secondary"
+                  >
+                    <CgTrash className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => blockedDatesAppend({ date: "" })}
+                className="bg-green-100 border border-green-900 text-green-900 py-1 rounded-secondary flex flex-row gap-x-1 items-center px-2 w-fit text-xs"
+              >
+                <FiPlus className="w-4 h-4" /> Add Blocked Date
+              </button>
             </label>
           </div>
 
