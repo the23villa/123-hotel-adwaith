@@ -57,6 +57,11 @@ const rentSchema = new Schema(
       endDate: Date,
     },
 
+    blockedDates: [{
+      type: Date,
+      required: false
+    }],
+
     location: {
       type: String,
       required: [true, "Please enter rent location"],

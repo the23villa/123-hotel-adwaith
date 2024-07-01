@@ -114,6 +114,14 @@ const AddRent = () => {
 
     formData.append("duration", JSON.stringify(data.duration));
 
+    const blockedDates = Array.isArray(data.blockedDates)
+      ? data.blockedDates
+      : [data.blockedDates];
+
+    blockedDates.forEach((date) => {
+      formData.append("blockedDates", date);
+    });
+
     addRent(formData);
   };
 
@@ -257,6 +265,17 @@ const AddRent = () => {
               id="endDate"
               className="rounded"
               {...register("duration.endDate", { required: true })}
+            />
+          </label>
+
+          <label htmlFor="blockedDates" className="flex flex-col gap-y-2">
+            Blocked Dates
+            <input
+              type="date"
+              name="blockedDates"
+              id="blockedDates"
+              className="rounded"
+              {...register("blockedDates", { required: false })}
             />
           </label>
         </div>

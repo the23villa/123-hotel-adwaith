@@ -72,6 +72,9 @@ const UpdateRent = () => {
         startDate: formatDate(rent?.duration?.startDate) || "",
         endDate: formatDate(rent?.duration?.endDate) || "",
       },
+      blockedDates: rent?.blockedDates?.[0]
+        ? formatDate(rent.blockedDates[0])
+        : "",
       location: rent?.location || "",
       type: rent?.type || "",
       information: rent?.information?.map((item) => ({
@@ -168,6 +171,10 @@ const UpdateRent = () => {
       for (let i = 0; i < data.gallery.length; i++) {
         formData.append("gallery", data.gallery[i]);
       }
+    }
+
+    if (data.blockedDates) {
+      formData.append("blockedDates", data.blockedDates);
     }
 
     formData.append("duration", JSON.stringify(data.duration));
@@ -323,6 +330,17 @@ const UpdateRent = () => {
                 id="endDate"
                 className="rounded"
                 {...register("duration.endDate")}
+              />
+            </label>
+
+            <label htmlFor="blockedDates" className="flex flex-col gap-y-2">
+              Blocked Date
+              <input
+                type="date"
+                name="blockedDates"
+                id="blockedDates"
+                className="rounded"
+                {...register("blockedDates")}
               />
             </label>
           </div>

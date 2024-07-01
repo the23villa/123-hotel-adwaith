@@ -17,6 +17,8 @@ import Modal from "../shared/modal/Modal";
 import { setBooking } from "@/features/booking/bookingSlice";
 import { useCreatePaymentIntentMutation } from "@/services/payment/paymentApi";
 import Image from "next/image";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Left = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +31,8 @@ const Left = () => {
   const { handleSubmit, control, watch, setValue } = useForm();
   const dispatch = useDispatch();
   const members = watch("members");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const duration = watch("duration");
   const price = watch("price");
   const includeFood = watch("includeFood", false);
@@ -36,6 +40,32 @@ const Left = () => {
   const [foodLabelText, setFoodLabelText] = useState(
     "check the box to Include food"
   );
+  const blockedDates = tour?.blockedDates?.map((date) => new Date(date)) || [];
+
+  const isBlockedDate = (date) => {
+    return blockedDates.some(
+      (blockedDate) =>
+        date.getDate() === blockedDate.getDate() &&
+        date.getMonth() === blockedDate.getMonth() &&
+        date.getFullYear() === blockedDate.getFullYear()
+    );
+  };
+
+  const isValidEndDate = (date) => {
+    if (!startDate) return true;
+
+    // Check if there's any blocked date between start and end
+    for (let d = new Date(startDate); d <= date; d.setDate(d.getDate() + 1)) {
+      if (isBlockedDate(d)) return false;
+    }
+    return true;
+  };
+
+  const customDayClassNames = (date) => {
+    return isBlockedDate(date)
+      ? "bg-red-500 text-white hover:bg-red-600 cursor-not-allowed"
+      : "";
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -155,8 +185,25 @@ const Left = () => {
   }
 
   function handleFoodCheckboxChange(event) {
-    const isChecked = event.target.checked;
-    setValue("includeFood", isChecked);
+    const formattedData = {
+      ...data,
+      duration: {
+        startDate: data.duration.startDate
+          ? formatDate(data.duration.startDate)
+          : null,
+        endDate: data.duration.endDate
+          ? formatDate(data.duration.endDate)
+          : null,
+      },
+    };
+    console.log(formattedData);
+    setIsOpen(true);
+    dispatch(setBooking({ ...formattedData, updatedPrice: price }));
+  }
+
+  function formatDate(date) {
+    if (!date) return "";
+    return new Date(date).toISOString();
   }
 
   useEffect(() => {
@@ -364,50 +411,60 @@ const Left = () => {
             <div className="flex lg:flex-row flex-col justify-between gap-2">
               <Controller
                 control={control}
-                rules={{ required: true }}
                 name="duration.startDate"
-                defaultValue={formatDate(tour?.duration?.startDate)}
+                rules={{
+                  required: true,
+                  validate: (date) => !isBlockedDate(new Date(date)),
+                }}
                 render={({ field }) => (
-                  <label
-                    htmlFor="startDate"
-                    className="flex flex-row gap-x-2 items-start w-full"
-                  >
-                    <AiOutlineCalendar size={25} />
-                    <div className="flex flex-col items-start gap-y-2 w-full">
-                      <span className="leading-4">Start Date</span>
-                      <input
-                        type="date"
-                        className="input input-sm input-bordered w-full"
-                        {...field}
-                      />
-                    </div>
-                  </label>
+                  <div>
+                    <label>Start Date</label>
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date) => {
+                        setStartDate(date);
+                        setEndDate(null); // Reset end date when start date changes
+                        field.onChange(date);
+                      }}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={new Date()}
+                      filterDate={(date) => !isBlockedDate(date)}
+                      inline
+                    />
+                  </div>
                 )}
               />
 
               <Controller
                 control={control}
-                rules={{ required: true }}
                 name="duration.endDate"
-                defaultValue={formatDate(tour?.duration?.endDate)}
+                rules={{
+                  required: true,
+                  validate: (date) => isValidEndDate(new Date(date)),
+                }}
                 render={({ field }) => (
-                  <label
-                    htmlFor="endDate"
-                    className="flex flex-row gap-x-2 items-start w-full"
-                  >
-                    <AiOutlineCalendar size={25} />
-                    <div className="flex flex-col items-start gap-y-2 w-full">
-                      <span className="leading-4">End Date</span>
-                      <input
-                        type="date"
-                        className="input input-sm input-bordered w-full"
-                        {...field}
-                        min={watch("duration.startDate")}
-                      />
-                    </div>
-                  </label>
+                  <div>
+                    <label>End Date</label>
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date) => {
+                        setEndDate(date);
+                        field.onChange(date);
+                      }}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      filterDate={(date) => isValidEndDate(date)}
+                      inline
+                      disabled={!startDate}
+                    />
+                  </div>
                 )}
               />
+
               <div className="fixed bottom-0 left-0 right-0 bg-white z-50 p-4 shadow-md border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold flex flex-col">
@@ -597,6 +654,11 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
     });
   }
 
+  function formatDisplayDate(dateString) {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString();
+  }
+
   if (showSuccess) {
     return (
       <div className="h-full w-full flex flex-col justify-center items-center gap-4">
@@ -662,8 +724,8 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
           </div>
           <div className="flex justify-between text-sm">
             <span>
-              Dates: {booking?.duration?.startDate} to{" "}
-              {booking?.duration?.endDate}
+              Dates: {formatDisplayDate(booking?.duration?.startDate)} to{" "}
+              {formatDisplayDate(booking?.duration?.endDate)}
             </span>
             <span>Members: {members}</span>
           </div>
