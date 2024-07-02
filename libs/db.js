@@ -1,8 +1,3 @@
-/**
- * Title: Write a program using JavaScript on ConnectDB
-.
- */
-
 import { connect } from "mongoose";
 
 const connectDB = async () => {

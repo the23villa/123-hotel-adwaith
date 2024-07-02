@@ -40,7 +40,20 @@ const Left = () => {
   const [foodLabelText, setFoodLabelText] = useState(
     "check the box to Include food"
   );
-  const blockedDates = tour?.blockedDates?.map((date) => new Date(date)) || [];
+  const [blockedDates, setBlockedDates] = useState([]);
+
+  useEffect(() => {
+    if (tour?._id) {
+      fetch(`/api/getBlockedDates?rentId=${tour._id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setBlockedDates(data.blockedDates.map((date) => new Date(date)));
+        })
+        .catch((error) =>
+          console.error("Error fetching blocked dates:", error)
+        );
+    }
+  }, [tour?._id]);
 
   const isBlockedDate = (date) => {
     return blockedDates.some(
@@ -51,20 +64,32 @@ const Left = () => {
     );
   };
 
+  const isValidStartDate = (date) => {
+    // Check if the date is blocked
+    const isBlocked = blockedDates.some(
+      (blockedDate) =>
+        date.getDate() === blockedDate.getDate() &&
+        date.getMonth() === blockedDate.getMonth() &&
+        date.getFullYear() === blockedDate.getFullYear()
+    );
+
+    // If it's not blocked, it's a valid start date
+    return !isBlocked;
+  };
+
   const isValidEndDate = (date) => {
     if (!startDate) return true;
 
-    // Check if there's any blocked date between start and end
-    for (let d = new Date(startDate); d <= date; d.setDate(d.getDate() + 1)) {
-      if (isBlockedDate(d)) return false;
+    // Check if the end date is after the start date
+    if (date <= startDate) return false;
+
+    // Check if there's any blocked date between start and end (exclusive)
+    for (let d = new Date(startDate); d < date; d.setDate(d.getDate() + 1)) {
+      if (isBlockedDate(d)) {
+        return false;
+      }
     }
     return true;
-  };
-
-  const customDayClassNames = (date) => {
-    return isBlockedDate(date)
-      ? "bg-red-500 text-white hover:bg-red-600 cursor-not-allowed"
-      : "";
   };
 
   const openModal = () => {
@@ -409,13 +434,13 @@ const Left = () => {
           >
             {/* startDate & endDate */}
             <div className="flex lg:flex-row flex-col justify-between gap-5">
-              <h2 className="font-serif">Start Date</h2>
+              <h2 className="font-serif">Check In</h2>
               <Controller
                 control={control}
                 name="duration.startDate"
                 rules={{
                   required: true,
-                  validate: (date) => !isBlockedDate(new Date(date)),
+                  validate: (date) => isValidStartDate(new Date(date)),
                 }}
                 render={({ field }) => (
                   <div>
@@ -423,20 +448,20 @@ const Left = () => {
                       selected={startDate}
                       onChange={(date) => {
                         setStartDate(date);
-                        setEndDate(null); // Reset end date when start date changes
+                        setEndDate(null);
                         field.onChange(date);
                       }}
                       selectsStart
                       startDate={startDate}
                       endDate={endDate}
                       minDate={new Date()}
-                      filterDate={(date) => !isBlockedDate(date)}
+                      filterDate={isValidStartDate}
                       inline
                     />
                   </div>
                 )}
               />
-              <h2 className="font-serif">End Date</h2>
+              <h2 className="font-serif">Check Out</h2>
               <Controller
                 control={control}
                 name="duration.endDate"
@@ -455,8 +480,12 @@ const Left = () => {
                       selectsEnd
                       startDate={startDate}
                       endDate={endDate}
-                      minDate={startDate}
-                      filterDate={(date) => isValidEndDate(date)}
+                      minDate={
+                        startDate
+                          ? new Date(startDate.getTime() + 86400000)
+                          : null
+                      }
+                      filterDate={isValidEndDate}
                       inline
                       disabled={!startDate}
                     />
@@ -577,6 +606,11 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
     }
   }, [data, error, isLoading]);
 
+  function formatDate(date) {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString();
+  }
+
   function handleRazorpayPayment(paymentData) {
     setIsRazorpayOpen(true);
     const options = {
@@ -592,16 +626,25 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
         setShowSuccess(true);
         setOrderId(response.razorpay_order_id);
         setIsOpen(true);
+        setIsOpen(true);
         sendConfirmationEmail({
           rent: rent?._id,
           price: rent?.price * members,
           members: members,
-          duration: booking?.duration,
+          duration: {
+            startDate: formatDate(booking?.duration?.startDate),
+            endDate: formatDate(booking?.duration?.endDate),
+          },
           email: user?.email,
           orderId: response.razorpay_order_id,
           amount: paymentData.amount,
           currency: paymentData.currency,
         });
+        updateBlockedDates(
+          rent?._id,
+          booking?.duration?.startDate,
+          booking?.duration?.endDate
+        );
       },
       modal: {
         ondismiss: function () {
@@ -619,6 +662,27 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
 
     const rzp = new window.Razorpay(options);
     rzp.open();
+  }
+
+  async function updateBlockedDates(rentId, startDate, endDate) {
+    try {
+      const response = await fetch("/api/updateBlockedDates", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rentId, startDate, endDate }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log("Blocked dates updated successfully");
+      } else {
+        console.error("Failed to update blocked dates:", result.message);
+      }
+    } catch (error) {
+      console.error("Error updating blocked dates:", error);
+    }
   }
 
   async function sendConfirmationEmail(data) {
@@ -652,11 +716,6 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
     });
   }
 
-  function formatDisplayDate(dateString) {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString();
-  }
-
   if (showSuccess) {
     return (
       <div className="h-full w-full flex flex-col justify-center items-center gap-4">
@@ -671,8 +730,8 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
         <div className="text-center">
           <p className="font-medium">{rent?.title}</p>
           <p>
-            Dates: {booking?.duration?.startDate} to{" "}
-            {booking?.duration?.endDate}
+            Dates: {formatDate(booking?.duration?.startDate)} to{" "}
+            {formatDate(booking?.duration?.endDate)}
           </p>
           <p>Members: {members}</p>
           <p>Total Amount: ₹{totalPrice}</p>
@@ -722,8 +781,8 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
           </div>
           <div className="flex justify-between text-sm">
             <span>
-              Dates: {formatDisplayDate(booking?.duration?.startDate)} to{" "}
-              {formatDisplayDate(booking?.duration?.endDate)}
+              Dates: {formatDate(booking?.duration?.startDate)} to{" "}
+              {formatDate(booking?.duration?.endDate)}
             </span>
             <span>Members: {members}</span>
           </div>
