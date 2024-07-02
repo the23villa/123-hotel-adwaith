@@ -35,7 +35,8 @@ const Left = () => {
   const [endDate, setEndDate] = useState(null);
   const duration = watch("duration");
   const price = watch("price");
-  const includeFood = watch("includeFood", false);
+  const [includeFood, setIncludeFood] = useState(false);
+  const [hasSaturday, setHasSaturday] = useState(false);
   const foodBasePrice = tour?.foodBasePrice || 700;
   const [foodLabelText, setFoodLabelText] = useState(
     "check the box to Include food"
@@ -100,33 +101,38 @@ const Left = () => {
   const changeModalImage = (index) => {
     setCurrentModalImage(index);
   };
-  // const isMounted = useRef(false);
 
-  // useEffect(() => {
-  //   if (!isMounted.current && instanceRef.current) {
-  //     instanceRef.current.update();
-  //     isMounted.current = true;
-  //   }
-  // }, []);
+  function calculateNights(startDate, endDate) {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }
 
   useEffect(() => {
     const baseMembers = tour?.members || 1;
     const basePrice = tour?.price || 0;
     const priceIncrease = tour?.priceIncrease || 1000;
 
-    let totalPrice = basePrice;
+    const nights = calculateNights(startDate, endDate);
+
+    let totalPrice = basePrice * Math.max(1, nights); // Minimum 1 night
 
     if (members > baseMembers) {
       const extraMembers = members - baseMembers;
-      totalPrice += extraMembers * priceIncrease;
+      totalPrice += extraMembers * priceIncrease * nights;
     }
 
     if (includeFood) {
-      totalPrice += foodBasePrice * members;
+      totalPrice += foodBasePrice * members * nights;
     }
 
     setValue("price", Math.ceil(totalPrice));
   }, [
+    startDate,
+    endDate,
     members,
     includeFood,
     setValue,
@@ -206,25 +212,12 @@ const Left = () => {
   function handleIntegratePurchase(data) {
     console.log(data);
     setIsOpen(true);
-    dispatch(setBooking({ ...data, updatedPrice: price }));
+    dispatch(setBooking({ ...data, includeFood, updatedPrice: price }));
   }
 
-  function handleFoodCheckboxChange(event) {
-    const formattedData = {
-      ...data,
-      duration: {
-        startDate: data.duration.startDate
-          ? formatDate(data.duration.startDate)
-          : null,
-        endDate: data.duration.endDate
-          ? formatDate(data.duration.endDate)
-          : null,
-      },
-    };
-    console.log(formattedData);
-    setIsOpen(true);
-    dispatch(setBooking({ ...formattedData, updatedPrice: price }));
-  }
+  const handleFoodCheckboxChange = (event) => {
+    setIncludeFood(event.target.checked);
+  };
 
   function formatDate(date) {
     if (!date) return "";
@@ -233,16 +226,40 @@ const Left = () => {
 
   useEffect(() => {
     const startDate = watch("duration.startDate");
-    if (startDate) {
-      const dayOfWeek = new Date(startDate).getDay();
-      if (dayOfWeek === 6) {
-        setValue("includeFood", true);
-        setFoodLabelText("On Saturdays the food is compulsorily included");
-      } else {
-        setFoodLabelText("check the box to Include food");
+    const endDate = watch("duration.endDate");
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      let saturdayFound = false;
+
+      // Check each day in the range
+      for (
+        let day = new Date(start);
+        day <= end;
+        day.setDate(day.getDate() + 1)
+      ) {
+        if (day.getDay() === 6) {
+          // 6 represents Saturday
+          saturdayFound = true;
+          break;
+        }
       }
+
+      setHasSaturday(saturdayFound);
+      if (saturdayFound) {
+        setIncludeFood(true);
+        setFoodLabelText(
+          "Food is compulsorily included as the stay includes a Saturday"
+        );
+      } else {
+        setFoodLabelText("Check the box to include food");
+      }
+    } else {
+      setHasSaturday(false);
+      setFoodLabelText("Check the box to include food");
     }
-  }, [watch("duration.startDate"), setValue]);
+  }, [watch("duration.startDate"), watch("duration.endDate")]);
 
   useEffect(() => {
     const startDate = watch("duration.startDate");
@@ -343,18 +360,6 @@ const Left = () => {
         <Right />
         <label className="flex flex-col items-start gap-2">
           <h2 className="text-lg mb-2">Meal</h2>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={includeFood}
-              onChange={handleFoodCheckboxChange}
-              disabled={
-                watch("duration.startDate") &&
-                new Date(watch("duration.startDate")).getDay() === 6
-              }
-            />
-            <span>{foodLabelText}</span>
-          </div>
           <div
             className={`mt-4 ${isExpanded ? "" : "max-h-40 overflow-hidden"}`}
           >
@@ -450,6 +455,7 @@ const Left = () => {
                         setStartDate(date);
                         setEndDate(null);
                         field.onChange(date);
+                        setValue("duration.startDate", date);
                       }}
                       selectsStart
                       startDate={startDate}
@@ -476,6 +482,7 @@ const Left = () => {
                       onChange={(date) => {
                         setEndDate(date);
                         field.onChange(date);
+                        setValue("duration.endDate", date);
                       }}
                       selectsEnd
                       startDate={startDate}
@@ -554,6 +561,15 @@ const Left = () => {
               />
             </div>
           </form>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeFood}
+              onChange={handleFoodCheckboxChange}
+              disabled={hasSaturday}
+            />
+            <span>{foodLabelText}</span>
+          </div>
         </div>
       </div>
 
@@ -584,7 +600,8 @@ function Checkout({ rent, setIsOpen, members, updatedPrice }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [isRazorpayOpen, setIsRazorpayOpen] = useState(false);
-  const totalPrice = updatedPrice || members * rent?.price;
+  const totalPrice =
+    booking.updatedPrice || updatedPrice || members * rent?.price;
   const { control } = useForm({
     defaultValues: {
       email: user?.email,
