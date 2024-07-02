@@ -1,7 +1,4 @@
-/**
- * Title: Write a program using JavaScript on Forgot Password
-.
- */
+// pages/api/auth/forgotPassword.js
 
 import { forgotPassword } from "@/controllers/auth.controller";
 

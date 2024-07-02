@@ -1,5 +1,6 @@
 import User from "@/models/user.model";
 import generateAccessToken from "@/utils/jwt.util";
+import { verifyOTPFromDatabase } from "@/utils/otpUtils";
 
 // signup
 export async function signUpUser(req) {
@@ -77,10 +78,22 @@ export async function signInUser(req) {
 // forgot password
 export async function forgotPassword(req) {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const { email, otp, newPassword } = req.body;
+
+    // Verify OTP
+    const isValid = await verifyOTPFromDatabase(email, otp);
+
+    if (!isValid) {
+      return {
+        success: false,
+        message: "Invalid OTP",
+      };
+    }
+
+    const user = await User.findOne({ email });
 
     if (user) {
-      const hashedPassword = user.encryptPassword(req.body.password);
+      const hashedPassword = user.encryptPassword(newPassword);
 
       const result = await User.findByIdAndUpdate(user._id, {
         $set: { password: hashedPassword },
@@ -110,7 +123,6 @@ export async function forgotPassword(req) {
     };
   }
 }
-
 // get persist user
 export async function persistUser(req) {
   try {
