@@ -47,13 +47,13 @@ const BestSelling = ({ className }) => {
               ? Array.from({ length: 4 }, (_, index) => (
                   <SkeletonCard
                     key={index}
-                    className="flex-shrink-0 w-full sm:w-auto"
+                    className="flex-shrink-1 w-full sm:w-auto"
                   />
                 ))
               : tours.map((tour) => (
                   <div
                     key={tour._id}
-                    className="flex-shrink-0 w-full sm:w-auto"
+                    className="flex-shrink-1 w-full sm:w-auto"
                   >
                     <Card tour={tour} />
                   </div>

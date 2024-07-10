@@ -369,7 +369,7 @@ const Left = () => {
   const handleWhatsAppRedirect = () => {
     const phoneNumber = "919004992867";
     const message = encodeURIComponent(
-      "Hello, I have a question about The 23 Villa."
+      "Hello, I have a query about The 23 Villa."
     );
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
   };
