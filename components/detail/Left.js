@@ -19,6 +19,10 @@ import { useCreatePaymentIntentMutation } from "@/services/payment/paymentApi";
 import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FaDownload } from "react-icons/fa";
+import jsPDF from "jspdf";
+import { FaRegCommentAlt } from "react-icons/fa";
+import { FaQuestion } from "react-icons/fa";
 
 const Left = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -280,9 +284,108 @@ const Left = () => {
     return <div>No images available</div>;
   }
 
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(20);
+    doc.text(tour?.title || "Tour Details", 20, 20);
+
+    // Basic details
+    doc.setFontSize(12);
+    doc.text(`Location: ${tour?.location || "N/A"}`, 20, 30);
+    doc.text(`Price: ₹${tour?.price || "N/A"}`, 20, 40);
+    doc.text(`Base Members: ${tour?.members || "N/A"}`, 20, 50);
+    doc.text(
+      `Additional Member Price: ₹${tour?.priceIncrease || "N/A"}`,
+      20,
+      60
+    );
+
+    doc.text("Important Information:", 20, 70);
+    tour?.information?.forEach((info, index) => {
+      const infoLines = doc.splitTextToSize(`• ${info}`, 170);
+      doc.text(infoLines, 20, 80 + index * 10);
+    });
+
+    doc.addPage();
+    doc.text("Amenities:", 20, 20);
+    const amenities = [
+      "WiFi Fibre",
+      "Child friendly",
+      "2 AC Bedrooms",
+      "Gazebo for dining",
+      "Television",
+      "Music system",
+      "24x7 Private Pool with filtration plant for clean water",
+      "2 Separate clean Washrooms",
+      "Spacious Balcony with Pool and Garden view",
+      "Refrigerator",
+      "Authentic Countryside Food",
+      "Geysers for hot water",
+      "Power backup up to 8 hours (only light, fan and charging point)",
+      "Mineral water 💧",
+      "Bonfire",
+      "Free Parking",
+      "Games - Cricket, Badminton, etc",
+      "Separate kitchen",
+    ];
+    amenities.forEach((amenity, index) => {
+      doc.text(`• ${amenity}`, 20, 30 + index * 10);
+    });
+
+    // Meal details
+    doc.addPage();
+    doc.text("Meal Details:", 20, 20);
+    doc.setFontSize(10);
+    doc.text("Veg (lunch & dinner):", 20, 30);
+    doc.text("Time: 1:30 pm to 3 pm", 30, 40);
+    doc.text("We provide lunch, dinner, breakfast and Tea", 30, 50);
+    doc.text(
+      "Menu: Daal, Paneer mutter/Mix veg/Palak paneer, Rice bhakari or Chapati, Rice, Salad, Papad, Pickle, Sweet",
+      30,
+      60
+    );
+
+    doc.text("Non veg (lunch & dinner):", 20, 80);
+    doc.text("Time: 8:30 pm to 10 pm", 30, 90);
+    doc.text(
+      "Menu: Chicken (suka or rassa), Rice bhakari or Chapati, Rice, Salad, Papad, Pickle",
+      30,
+      100
+    );
+
+    doc.text("Breakfast (8.30 am to 10 am):", 20, 120);
+    doc.text(
+      "Any one for each person: Poha or upma, Misal paav, Burji paav, Tea",
+      30,
+      130
+    );
+
+    doc.text("Evening:", 20, 150);
+    doc.text("Tea Biscuits + 2 Vada Pav", 30, 160);
+    doc.save("tour_details.pdf");
+  };
+
+  const handleWhatsAppRedirect = () => {
+    const phoneNumber = "919004992867";
+    const message = encodeURIComponent(
+      "Hello, I have a question about The 23 Villa."
+    );
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+  };
+
   return (
     <>
       <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
+        <div className="flex justify-end mt-2">
+          <button
+            onClick={handleDownloadPDF}
+            className="flex items-center text-xs bg-primary text-white px-3 py-1 rounded-md hover:bg-primary-dark transition-colors"
+          >
+            <FaDownload className="mr-2" />
+            Download PDF
+          </button>
+        </div>
         <div className="mt-5 relative w-full h-60 overflow-hidden">
           {tour?.gallery?.map((thumbnail, index) => (
             <LoadImage
@@ -357,6 +460,16 @@ const Left = () => {
             </div>
           </Modal>
         )}
+        <div
+          className="fixed bottom-28 right-5 bg-gray-600 text-white rounded-full w-12 h-12 flex justify-center items-center cursor-pointer shadow-lg hover:bg-blue-600 transition-colors duration-300 ease-in-out z-50"
+          onClick={handleWhatsAppRedirect}
+          title="Need help? Click to chat with us"
+        >
+          <div className="relative">
+            <FaRegCommentAlt className="mt-1 w-8 h-8" />
+            <FaQuestion className="absolute mt-1 top-1 right-2 w-4 h-4" />
+          </div>
+        </div>
         <Right />
         <label className="flex flex-col items-start gap-2">
           <h2 className="text-lg mb-2">Meal</h2>
