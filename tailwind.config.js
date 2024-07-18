@@ -26,16 +26,16 @@ module.exports = {
   plugins: [
     function ({ addUtilities }) {
       addUtilities({
-        '.scrollbar-hide': {
-          '-ms-overflow-style': 'none', /* IE and Edge */
-          'scrollbar-width': 'none', /* Firefox */
-          '&::-webkit-scrollbar': {
-            display: 'none', /* Chrome, Safari, and Opera */
-          }
-        }
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none" /* IE and Edge */,
+          "scrollbar-width": "none" /* Firefox */,
+          "&::-webkit-scrollbar": {
+            display: "none" /* Chrome, Safari, and Opera */,
+          },
+        },
       });
     },
     require("@tailwindcss/forms"),
-    require("tailwind-scrollbar-hide")
+    require("tailwind-scrollbar-hide"),
   ],
 };

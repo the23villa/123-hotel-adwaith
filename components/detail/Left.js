@@ -376,7 +376,7 @@ const Left = () => {
 
   return (
     <>
-      <div className="lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
+      <div className="mr-6 lg:col-span-5 md:col-span-6 col-span-12 flex flex-col md:gap-y-8 gap-y-4">
         <div className="flex justify-end mt-2">
           <button
             onClick={handleDownloadPDF}

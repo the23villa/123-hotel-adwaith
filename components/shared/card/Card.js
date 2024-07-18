@@ -94,7 +94,7 @@ const Card = ({ tour }) => {
   };
 
   return (
-    <section className="group flex flex-col gap-y-5 border rounded overflow-hidden lg:w-96 w-80 shadow-md">
+    <section className="group flex flex-col gap-y-5 border rounded overflow-hidden lg:w-96 w-72 shadow-md">
       <div className="relative">
         {user?.favorite?.rents.some((rent) => rent?._id === _id) ? (
           <button
