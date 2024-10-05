@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <main>
       <Head>
-        <title>123 Hotel Booking</title>
+        <title>The 23 Villa</title>
       </Head>
       <Main>
         <Hero />
