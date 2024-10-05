@@ -6,13 +6,13 @@ async function sendConfirmationEmail(userEmail, purchaseDetails) {
     secure: false,
     port: 587,
     auth: {
-      user: "contact@saintiant.tech",
-      pass: "Saint@206"
+      user: "info@the23villa.com",
+      pass: "Ritesh@1995"
     }
   });
 
   const mailOptions = {
-    from: "contact@saintiant.tech",
+    from: "info@the23villa.com",
     to: userEmail,
     subject: 'Booking Confirmation',
     text: `Thank you for your payment. Your villa has been booked successfully!
