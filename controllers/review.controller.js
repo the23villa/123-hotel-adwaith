@@ -64,7 +64,7 @@ export const getReviews = async () => {
     if (reviews) {
       return {
         success: true,
-        message: "Welcome To 123 Booking",
+        message: "Welcome To 23 Villa",
         data: reviews,
       };
     } else {
