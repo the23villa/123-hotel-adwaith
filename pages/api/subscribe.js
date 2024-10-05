@@ -11,14 +11,14 @@ export default async function handler(req, res) {
       port: 587,
   
       auth: {
-        user: "contact@saintiant.tech",
-        pass: "Saint@206"
-      }
+       user: "info@the23villa.com",
+        pass: "Ritesh@1995",
+      },
     });
 
     // Prepare email options
     const mailOptions = {
-      from: "contact@saintiant.tech",
+      from: "info@the23villa.com",
       to: email,
       subject: 'Newsletter Subscription',
       text: 'Thank you for subscribing to our newsletter!'
