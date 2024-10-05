@@ -19,13 +19,13 @@ export default async function handler(req, res) {
         secure: false,
         port: 587,
         auth: {
-          user: "contact@saintiant.tech",
-          pass: "Saint@206"
+         user: "info@the23villa.com",
+         pass: "Ritesh@1995",
         }
       });
 
       const mailOptions = {
-        from: "contact@saintiant.tech",
+        from: "info@the23villa.com",
         to: email,
         subject: 'Password Reset OTP',
         text: `Your OTP for password reset is: ${otp}. This OTP is valid for 10 minutes.`
