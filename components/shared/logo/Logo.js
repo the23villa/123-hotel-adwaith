@@ -26,19 +26,19 @@ const Logo = () => {
   const isHomePage = router.pathname === "/";
 
   // Define your phone number
-  const phoneNumber = "+1234567890";
+  const phoneNumber = "9594232321";
 
   const callUsHandler = () => {
     window.location.href = `tel:${phoneNumber}`;
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex items-center justify-between w-full py-2">
       {isHomePage ? (
         <>
           <div className="flex items-center">
             <LoadImage
-              src="/assets/logo2.png"
+              src="/assets/logo3.png"
               alt="logo"
               title="logo"
               width={80}
@@ -49,13 +49,14 @@ const Logo = () => {
               }}
               className="cursor-pointer object-center max-w-full"
             />
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-white">The 23 Villa</span>
+            <div className="ml-2">
+              <span className="text-lg font-bold text-black">The 23 Villa</span>
+              <p className="text-sm text-gray-500">where families bond</p>
             </div>
           </div>
           {/* Call Us button */}
           <button
-            className="flex items-center bg-transparent mr-4 border-none text-white"
+            className="flex items-center bg-transparent mr-4 border-none text-black"
             onClick={callUsHandler}
           >
             <FaPhone className="mr-1" />
