@@ -8,9 +8,9 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="absolute top-0 left-0 w-full z-10">
+      <header className="absolute top-0 left-0 w-full z-10 bg-white">
         <Container>
-          <nav className="py-4 bg-transparent">
+          <nav className="bg-transparent">
             <section className="flex flex-row justify-between items-center">
               <Logo />
               <div className="hidden lg:block">
