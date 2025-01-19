@@ -25,7 +25,7 @@ const UserMenu = () => {
         </div>
         <div className="flex flex-col items-center text-gray-600">
           <MobileMenu />
-          <span className="text-sm text-gray-500 font-serif">Menu</span>
+          <span className="text-sm text-gray-500 font-serif">Profile</span>
         </div>
       </div>
     </div>
