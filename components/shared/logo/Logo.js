@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { FaArrowLeft, FaPhone } from "react-icons/fa";
+import { FaArrowLeft, FaPhone, FaPhoneAlt } from "react-icons/fa";
 import LoadImage from "../image/LoadImage";
 
 const BackIcon = () => {
@@ -59,7 +59,7 @@ const Logo = () => {
             className="flex items-center bg-transparent mr-4 border-none text-black"
             onClick={callUsHandler}
           >
-            <FaPhone className="mr-1" />
+            <FaPhoneAlt className="mr-1" />
             Call Us
           </button>
         </>
